@@ -1,4 +1,4 @@
-# sampleproj
+# Stock Market Game Client
 
 > A Vue.js project
 
