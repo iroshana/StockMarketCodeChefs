@@ -42,7 +42,7 @@ export default {
     name: 'Login',   
     methods:{
         login: function(){
-            this.$router.push('/test');
+            this.$router.push('/home');
         }
 
     },

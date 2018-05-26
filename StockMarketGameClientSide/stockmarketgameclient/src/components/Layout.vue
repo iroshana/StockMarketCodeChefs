@@ -1,5 +1,11 @@
 <template>
 <div id="layout">
+    <div class="br-logo">
+          <a href="#">
+              <span>[</span>AUXXA
+              <span>]</span>
+          </a>
+      </div>
   <div class="br-sideleft overflow-y-auto ps ps--theme_default ps--active-x ps--active-y" id="navigation">
         <label class="sidebar-label pd-x-15 mg-t-20">Navigation</label>
         <div class="br-sideleft-menu">
@@ -57,8 +63,8 @@
     <!-- ########## END: HEAD PANEL ########## -->
     <!-- ########## START: MAIN PANEL ########## -->
     <div class="br-mainpanel">
-    <router-view/> 
-
+    <router-view/>
+        
         <footer class="br-footer">
             <div class="footer-left">
 

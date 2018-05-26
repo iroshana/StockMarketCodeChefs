@@ -1,8 +1,7 @@
 <template>
 <div id="main">
   <Layout></Layout>
-  <Login v-show="isLogin"></Login>
-
+  <Login></Login>
   </div>
 </template>
 
