@@ -1,6 +1,6 @@
 <template>
     <div id="login">
-    <div id="auxxaLogin" class="login-container">
+    <div class="login-container">
         <div class="d-flex align-items-center justify-content-center bg-br-primary ht-100v">
             <div class="login-wrapper wd-300 wd-xs-350 pd-25 pd-xs-40 bg-white rounded shadow-base">
                 <div class="text-center"><img src="" width="50%" /></div>
@@ -37,24 +37,20 @@
 </template>
 
 <script>
-
 export default {
-    name: 'Login',   
-    methods:{
-        login: function(){
-            this.$router.push('/home');
-        }
-
-    },
-    data(){
-        return{
-            userModel:{
-            userName:'',
-            password:''
-        }
-
-        }
-    }    
-}
-
+  name: "Login",
+  methods: {
+    login: function() {
+      this.$router.push("/home");
+    }
+  },
+  data() {
+    return {
+      userModel: {
+        userName: "",
+        password: ""
+      }
+    };
+  }
+};
 </script>
