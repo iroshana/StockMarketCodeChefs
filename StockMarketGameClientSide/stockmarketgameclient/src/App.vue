@@ -4,7 +4,7 @@
         <div class="d-flex align-items-center justify-content-center bg-br-primary ht-100v">
             <div class="login-wrapper wd-300 wd-xs-350 pd-25 pd-xs-40 bg-white rounded shadow-base">
                 <div class="text-center"><img src="" width="50%" /></div>
-                <div class="signin-logo tx-center tx-28 tx-bold tx-inverse mg-b-10"><span class="tx-normal">[</span> Auxxa - Suite 1.0 <span class="tx-normal">]</span></div>
+                <div class="signin-logo tx-center tx-28 tx-bold tx-inverse mg-b-10"><span class="tx-normal">[</span> Stock Market <span class="tx-normal">]</span></div>
 
                 <div id="alertWithIcon" style="display:none;">
                     <div class="alert alert-danger" role="alert">

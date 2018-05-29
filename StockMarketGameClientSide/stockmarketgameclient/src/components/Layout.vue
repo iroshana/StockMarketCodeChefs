@@ -12,7 +12,11 @@
             <a href="#" class="br-menu-link active">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-ios-home-outline tx-22"></i>
-                    <span class="menu-item-label">Game Borad</span>
+                    <span class="menu-item-label">
+                        <router-link to="/dashboard">
+                            <a>Game Borad</a>
+                        </router-link>
+                    </span>
                 </div>
             </a>
             
@@ -121,10 +125,7 @@
 <script>
 export default {
   name: "Layout",
-  data: {},
-  methods: {
-    
-  }
+  methods: {}
 };
 </script>
 
