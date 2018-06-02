@@ -15,6 +15,8 @@ public class Test {
 
     @Column(name = "Password")
     private String password;
+    @Column(name = "Email")
+    private String Email;
 
     public Long getId() {
         return Id;
@@ -38,5 +40,19 @@ public class Test {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * @return the Email
+     */
+    public String getEmail() {
+        return Email;
+    }
+
+    /**
+     * @param Email the Email to set
+     */
+    public void setEmail(String Email) {
+        this.Email = Email;
     }
 }
