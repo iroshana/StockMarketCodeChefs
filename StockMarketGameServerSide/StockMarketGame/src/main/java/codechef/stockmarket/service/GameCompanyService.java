@@ -3,15 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package codechef.stockmarket.repository;
-
-import codechef.stockmarket.entity.*;
-import org.springframework.data.jpa.repository.JpaRepository;
+package codechef.stockmarket.service;
 
 /**
  *
  * @author thari
  */
-public interface CompanyRepositoryService  extends JpaRepository<Company, Long> {
+public class GameCompanyService {
     
 }

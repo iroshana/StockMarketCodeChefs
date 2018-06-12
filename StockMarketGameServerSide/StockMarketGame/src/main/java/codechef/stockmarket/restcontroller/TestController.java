@@ -4,7 +4,10 @@ import codechef.stockmarket.common.CommonUtil;
 import codechef.stockmarket.entity.Test;
 import codechef.stockmarket.repository.TestRepositoryService;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +36,18 @@ public class TestController {
     public ResponseEntity deleteTest(@RequestBody Test test){
         try {
             testRepositoryService.delete(test);
+      
         }catch (Exception ex){
 
         }
 
         return new ResponseEntity(HttpStatus.OK);
 
+    }
+    
+    @GetMapping("/notes/{name}")
+    public List<Test> getNoteById(@PathVariable(value = "name") String name) {
+        
+        return testRepositoryService.findAllByUserNAme(name);
     }
 }
