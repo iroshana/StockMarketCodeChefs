@@ -9,6 +9,7 @@ import codechef.stockmarket.common.CommonUtil;
 import codechef.stockmarket.common.ViewModels.*;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +54,8 @@ public class GameController {
     RoundRepository roundRepository = null;
     @Autowired
     GameRoundCompanyRepository gameRoundCompanyRepository = null;
+    @Autowired
+    WatchListRepository watchListRepository = null;
     
     @CrossOrigin
     @RequestMapping(value = "/Create/", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
@@ -68,6 +71,7 @@ public class GameController {
             game.setNoOfPlayers(1);
             game.setGameLeaderPoint(0);
             game.setNoOfRounds(5);
+            game.setCurrentRounds(1);
             response1 = gameRepository.save(game);
             
             Bank bank = bankRepository.findById(gamePlayer.getBankId()).get();
@@ -141,7 +145,7 @@ public class GameController {
     }
     
     @RequestMapping(value = "/GetAllGame/{gameId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
-    public GameViewModel getNoteById(@PathVariable(value = "gameId") Long gameId) {
+    public GameViewModel getGameById(@PathVariable(value = "gameId") Long gameId) {
         GameViewModel data = new GameViewModel();
         Game game = gameRepository.findById(gameId).get();
         
@@ -188,5 +192,69 @@ public class GameController {
         data.setGameRound(roundView);
         
         return data;
+    }
+    
+    @RequestMapping(value = "/GetAllCompanies/{gameRoundId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
+    public List<CompanyViewModel> getGameRoundCompantById(@PathVariable(value = "gameRoundId") Long gameRoundId) {
+        GameViewModel data = new GameViewModel();
+        
+        GameRound game = gameRoundRepository.findById(gameRoundId).get();
+        Set<GameRoundCompany> gameCompanyList = game.getGameRoundCompany();
+        
+        List<CompanyViewModel> companyList = new ArrayList<>();
+        
+        for(GameRoundCompany roundCompany : gameCompanyList){
+            CompanyViewModel company = new CompanyViewModel();
+            
+            company.setId(roundCompany.getGameCompany().getCompany().getId());
+            company.setName(roundCompany.getGameCompany().getCompany().getName());
+            company.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
+            company.setShareValue(roundCompany.getShareValue());
+            
+            companyList.add(company);
+        }
+        return companyList;
+    }
+    
+    @RequestMapping(value = "/GetWatchList/{gamePlayerId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
+    public List<CommonShareListViewModel> getWatchListId(@PathVariable(value = "gamePlayerId") Long gamePlayerId) {
+        List<CommonShareListViewModel> watchListList = new ArrayList<>();
+        GamePlayer gamePlayerList = gamePlayerRepository.findById(gamePlayerId).get();
+        
+        Set<WatchList> watchList = gamePlayerList.getWatchList();
+        
+        for(WatchList roundCompany : watchList){
+            CommonShareListViewModel watchlistView = new CommonShareListViewModel();
+            
+            watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
+            watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
+            watchlistView.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
+            watchlistView.setShareValue(roundCompany.getGameCompany().getShareValue());
+            watchlistView.setId(roundCompany.getId());
+            
+            watchListList.add(watchlistView);
+        }
+        return watchListList;
+    }
+    
+     @RequestMapping(value = "/GetGamePlayer/{gamePlayerId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
+    public PlayerGameDataViewModel getPlayerGameData(@PathVariable(value = "gamePlayerId") Long gamePlayerId) {
+        
+        PlayerGameDataViewModel player = new PlayerGameDataViewModel();
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).get();
+        
+        if(gamePlayer != null){
+            player.setPlayerId(gamePlayer.getPlayer().getId());
+            player.setScore(gamePlayer.getHighScore());
+            player.setTotalPurchase(gamePlayer.getTotalPurchase());
+            player.setTotalSales(gamePlayer.getTotalSales());
+            player.setPlayerName(gamePlayer.getPlayer().getName());
+            player.setBankBalance(gamePlayer.getBankBalance());
+            player.setBankName(gamePlayer.getBank().getName());
+            player.setBrokerName(gamePlayer.getBroker().getName());
+            player.setRound(gamePlayer.getGame().getCurrentRounds());
+            
+        }
+        return player;
     }
 }

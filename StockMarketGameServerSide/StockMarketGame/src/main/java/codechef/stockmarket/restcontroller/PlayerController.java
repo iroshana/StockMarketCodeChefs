@@ -6,11 +6,13 @@
 package codechef.stockmarket.restcontroller;
 
 import codechef.stockmarket.common.CommonUtil;
-import codechef.stockmarket.common.ViewModels.PlayerViewModel;
-import codechef.stockmarket.entity.Player;
+import codechef.stockmarket.common.ViewModels.*;
+import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlayerController {
     @Autowired
     PlayerRepository playerRepository = null;
-
+    @Autowired
+    GameRepository gameRepository = null;
     
     @CrossOrigin
     @RequestMapping(value = "/Create", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
@@ -64,5 +67,25 @@ public class PlayerController {
              playerView.setRating(player.get().getRating());
          }
          return playerView;
+    }
+    
+    @GetMapping("/GetallPlayer/{gameId}")
+    public List<PlayerListViewModel> getAllGamePlayers(@PathVariable(value = "gameId") Long gameId) {
+         List<PlayerListViewModel> playerListView = new ArrayList<>();
+         Game game = gameRepository.findById(gameId).get();
+         
+         Set<GamePlayer> players = game.getGamePlayers();
+         
+         for(GamePlayer player : players){
+             PlayerListViewModel playerView = new PlayerListViewModel();
+             playerView.setGamePlayerId(player.getId());
+             playerView.setPlayerName(player.getPlayer().getName());
+             playerView.setRating(player.getPlayer().getRating());
+             playerView.setScore(player.getScore());
+             
+             playerListView.add(playerView);
+         }
+         
+         return playerListView;
     }
 }

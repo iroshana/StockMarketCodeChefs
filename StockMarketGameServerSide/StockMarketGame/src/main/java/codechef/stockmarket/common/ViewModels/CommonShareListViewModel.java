@@ -9,25 +9,12 @@ package codechef.stockmarket.common.ViewModels;
  *
  * @author thari
  */
-public class CompanyViewModel {
+public class CommonShareListViewModel {
     private Long companyId;
+    private Long Id;
     private String name;
     private double shareValue;
     private int noOFShares;
-
-    /**
-     * @return the Id
-     */
-    public Long getId() {
-        return companyId;
-    }
-
-    /**
-     * @param Id the Id to set
-     */
-    public void setId(Long Id) {
-        this.companyId = Id;
-    }
 
     /**
      * @return the name
@@ -69,5 +56,33 @@ public class CompanyViewModel {
      */
     public void setNoOFShares(int noOFShares) {
         this.noOFShares = noOFShares;
+    }
+
+    /**
+     * @return the companyId
+     */
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    /**
+     * @param companyId the companyId to set
+     */
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
+    }
+
+    /**
+     * @return the Id
+     */
+    public Long getId() {
+        return Id;
+    }
+
+    /**
+     * @param Id the Id to set
+     */
+    public void setId(Long Id) {
+        this.Id = Id;
     }
 }

@@ -122,6 +122,9 @@ public class GameCompany {
 
     @OneToMany(mappedBy = "GameCompany")
     private Set<GameRoundCompany> GameRoundCompany = new HashSet<GameRoundCompany>();
+    
+    @OneToMany(mappedBy = "GameCompany")
+    private Set<WatchList> WatchList = new HashSet<WatchList>();
     /**
      * @return the PlayerPurchase
      */
@@ -144,9 +147,9 @@ public class GameCompany {
     }
 
     /**
-     * @param GameRoundCompany the GameRoundCompany to set
+     * @param gameRoundCompany the GameRoundCompany to set
      */
-    public void setGameRoundCompany(Set<GameRoundCompany> GameRoundCompany) {
-        this.GameRoundCompany = GameRoundCompany;
+    public void setGameRoundCompany(Set<GameRoundCompany> gameRoundCompany) {
+        this.GameRoundCompany = gameRoundCompany;
     }
 }

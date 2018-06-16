@@ -42,19 +42,6 @@ public class PlayerTransactions {
     public void setBank(Bank Bank) {
         this.Bank = Bank;
     }
-    /**
-     * @return the Game
-     */
-    public Game getGame() {
-        return Game;
-    }
-
-    /**
-     * @param Game the Game to set
-     */
-    public void setGame(Game Game) {
-        this.Game = Game;
-    }
 
     /**
      * @return the Amount
@@ -99,15 +86,17 @@ public class PlayerTransactions {
     private GameRound GameRound;
     
     @ManyToOne
-    @JoinColumn (name="GameId")
+    @JoinColumn (name="GamePlayerId")
     @JsonBackReference
-    private Game Game;
+    private GameRoundPlayer GamePlayer;
     
     @Column(name = "Amount")
     private float Amount;
-     @Column(name = "Time")
+    @Column(name = "Time")
     private String Time;
 
+    @Column(name = "TransactionNo")
+    private String TransactionNo;
     /**
      * @return the GameRound
      */
@@ -120,5 +109,33 @@ public class PlayerTransactions {
      */
     public void setGameRound(GameRound GameRound) {
         this.GameRound = GameRound;
+    }
+
+    /**
+     * @return the GamePlayer
+     */
+    public GameRoundPlayer getGamePlayer() {
+        return GamePlayer;
+    }
+
+    /**
+     * @param GamePlayer the GamePlayer to set
+     */
+    public void setGamePlayer(GameRoundPlayer GamePlayer) {
+        this.GamePlayer = GamePlayer;
+    }
+
+    /**
+     * @return the TransactionNo
+     */
+    public String getTransactionNo() {
+        return TransactionNo;
+    }
+
+    /**
+     * @param TransactionNo the TransactionNo to set
+     */
+    public void setTransactionNo(String TransactionNo) {
+        this.TransactionNo = TransactionNo;
     }
 }

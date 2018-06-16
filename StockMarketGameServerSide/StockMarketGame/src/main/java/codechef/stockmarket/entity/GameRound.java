@@ -112,9 +112,6 @@ public class GameRound {
     private Set<GameRoundPlayer> GameRoundPlayer = new HashSet<GameRoundPlayer>();
     
     @OneToMany(mappedBy = "GameRound")
-    private Set<PlayerPurchase> PlayerPurchase = new HashSet<PlayerPurchase>();
-    
-    @OneToMany(mappedBy = "GameRound")
     private Set<PlayerTransactions> PlayerTransactions = new HashSet<PlayerTransactions>();
     
     @OneToMany(mappedBy = "GameRound")
@@ -131,20 +128,6 @@ public class GameRound {
      */
     public void setGameRoundPlayer(Set<GameRoundPlayer> GameRoundPlayer) {
         this.GameRoundPlayer = GameRoundPlayer;
-    }
-
-    /**
-     * @return the PlayerPurchase
-     */
-    public Set<PlayerPurchase> getPlayerPurchase() {
-        return PlayerPurchase;
-    }
-
-    /**
-     * @param PlayerPurchase the PlayerPurchase to set
-     */
-    public void setPlayerPurchase(Set<PlayerPurchase> PlayerPurchase) {
-        this.PlayerPurchase = PlayerPurchase;
     }
 
     /**

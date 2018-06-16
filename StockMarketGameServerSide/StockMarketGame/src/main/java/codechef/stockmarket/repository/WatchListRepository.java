@@ -12,6 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author thari
  */
-public interface GameRoundCompanyRepository  extends JpaRepository<GameRoundCompany, Long>{
-    //GameRoundCompany findBygameRound(GameRound round);
+public interface WatchListRepository  extends JpaRepository<WatchList, Long>{
+    
 }

@@ -6,6 +6,7 @@
 package codechef.stockmarket.repository;
 
 import codechef.stockmarket.entity.*;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

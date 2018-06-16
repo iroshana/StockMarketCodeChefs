@@ -6,6 +6,7 @@
 package codechef.stockmarket.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javax.persistence.*;
 
 /**
@@ -41,20 +42,6 @@ public class PlayerPurchase {
      */
     public void setGameCompany(GameCompany GameCompany) {
         this.GameCompany = GameCompany;
-    }
-
-    /**
-     * @return the GameRound
-     */
-    public GameRound getGameRound() {
-        return GameRound;
-    }
-
-    /**
-     * @param GameRound the GameRound to set
-     */
-    public void setGameRound(GameRound GameRound) {
-        this.GameRound = GameRound;
     }
 
     /**
@@ -95,13 +82,45 @@ public class PlayerPurchase {
     private GameCompany GameCompany;
     
     @ManyToOne
-    @JoinColumn (name="GameRoundId")
+    @JoinColumn (name="GamePlayerId")
     @JsonBackReference
-    private GameRound GameRound;
+    private GameRoundPlayer GamePlayer;
     
     @Column(name = "NoOfShare")
     private int NoOfShare;
     
     @Column(name = "ShareValue")
     private double ShareValue;
+    
+    @Column(name = "IsSold")
+    private boolean isSold;
+
+    /**
+     * @return the GamePlayer
+     */
+    public GameRoundPlayer getGamePlayer() {
+        return GamePlayer;
+    }
+
+    /**
+     * @param GamePlayer the GamePlayer to set
+     */
+    public void setGamePlayer(GameRoundPlayer GamePlayer) {
+        this.GamePlayer = GamePlayer;
+    }
+
+    /**
+     * @return the isSold
+     */
+    public boolean getIsSold() {
+        return isSold;
+    }
+
+    /**
+     * @param isSold the isSold to set
+     */
+    public void setIsSold(boolean isSold) {
+        this.isSold = isSold;
+    }
+
 }

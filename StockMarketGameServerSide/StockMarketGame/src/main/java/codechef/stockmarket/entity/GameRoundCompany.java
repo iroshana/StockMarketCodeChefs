@@ -39,7 +39,7 @@ public class GameRoundCompany {
     private GameCompany GameCompany;
     
     @Column(name = "ShareValue")
-    private double ShareValue;
+    private double shareValue;
 
     /**
      * @return the Id
@@ -79,22 +79,22 @@ public class GameRoundCompany {
     /**
      * @param GameCompany the GameCompany to set
      */
-    public void setGameCompany(GameCompany GameCompany) {
-        this.GameCompany = GameCompany;
+    public void setGameCompany(GameCompany gameCompany) {
+        this.GameCompany = gameCompany;
     }
 
     /**
      * @return the ShareValue
      */
     public double getShareValue() {
-        return ShareValue;
+        return shareValue;
     }
 
     /**
      * @param ShareValue the ShareValue to set
      */
     public void setShareValue(double ShareValue) {
-        this.ShareValue = ShareValue;
+        this.shareValue = ShareValue;
     }
     
 }

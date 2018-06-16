@@ -6,6 +6,8 @@
 package codechef.stockmarket.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -17,17 +19,31 @@ import javax.persistence.*;
 public class GamePlayer {
 
     /**
+     * @return the WatchList
+     */
+    public Set<WatchList> getWatchList() {
+        return WatchList;
+    }
+
+    /**
+     * @param WatchList the WatchList to set
+     */
+    public void setWatchList(Set<WatchList> WatchList) {
+        this.WatchList = WatchList;
+    }
+
+    /**
      * @return the Id
      */
     public Long getId() {
-        return Id;
+        return id;
     }
 
     /**
      * @param Id the Id to set
      */
     public void setId(Long Id) {
-        this.Id = Id;
+        this.id = Id;
     }
 
     /**
@@ -105,14 +121,14 @@ public class GamePlayer {
      * @return the HighScore
      */
     public double getHighScore() {
-        return HighScore;
+        return getScore();
     }
 
     /**
      * @param HighScore the HighScore to set
      */
     public void setHighScore(double HighScore) {
-        this.HighScore = HighScore;
+        this.setScore(HighScore);
     }
 
     /**
@@ -145,7 +161,7 @@ public class GamePlayer {
     @Id
     @Column(name = "ID", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+    private Long id;
    
     @ManyToOne
     @JoinColumn (name="GameId")
@@ -170,13 +186,65 @@ public class GamePlayer {
     @Column(name = "Bankbalance")
     private double BankBalance;
     
-    @Column(name = "HighScore")
-    private double HighScore;
+    @Column(name = "Score")
+    private double Score;
+    
     
     @Column(name = "TotalPurchase")
     private double TotalPurchase;
     
     @Column(name = "TotalSales")
     private double TotalSales;
+    
+    @OneToMany(mappedBy = "GamePlayer")
+    private Set<PlayerPurchase> PlayerPurchase = new HashSet<PlayerPurchase>();
+
+    @OneToMany(mappedBy = "GamePlayer")
+    private Set<WatchList> WatchList = new HashSet<WatchList>();
+    
+    
+    @OneToMany(mappedBy = "GamePlayer")
+    private Set<PlayerTransactions> PlayerTransactions = new HashSet<PlayerTransactions>();
+    /**
+     * @return the Score
+     */
+    public double getScore() {
+        return Score;
+    }
+
+    /**
+     * @param Score the Score to set
+     */
+    public void setScore(double Score) {
+        this.Score = Score;
+    }
+
+    /**
+     * @return the PlayerPurchase
+     */
+    public Set<PlayerPurchase> getPlayerPurchase() {
+        return PlayerPurchase;
+    }
+
+    /**
+     * @param PlayerPurchase the PlayerPurchase to set
+     */
+    public void setPlayerPurchase(Set<PlayerPurchase> PlayerPurchase) {
+        this.PlayerPurchase = PlayerPurchase;
+    }
+
+    /**
+     * @return the PlayerTransactions
+     */
+    public Set<PlayerTransactions> getPlayerTransactions() {
+        return PlayerTransactions;
+    }
+
+    /**
+     * @param PlayerTransactions the PlayerTransactions to set
+     */
+    public void setPlayerTransactions(Set<PlayerTransactions> PlayerTransactions) {
+        this.PlayerTransactions = PlayerTransactions;
+    }
     
 }
