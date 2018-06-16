@@ -5,6 +5,9 @@
  */
 package codechef.stockmarket.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -13,6 +16,34 @@ import javax.persistence.*;
  */
 @Entity
 public class GameRound {
+
+    /**
+     * @return the roundLeaderPoint
+     */
+    public int getRoundLeaderPoint() {
+        return roundLeaderPoint;
+    }
+
+    /**
+     * @param roundLeaderPoint the roundLeaderPoint to set
+     */
+    public void setRoundLeaderPoint(int roundLeaderPoint) {
+        this.roundLeaderPoint = roundLeaderPoint;
+    }
+
+    /**
+     * @return the roundLeaderId
+     */
+    public Long getRoundLeaderId() {
+        return roundLeaderId;
+    }
+
+    /**
+     * @param roundLeaderId the roundLeaderId to set
+     */
+    public void setRoundLeaderId(Long roundLeaderId) {
+        this.roundLeaderId = roundLeaderId;
+    }
 
     /**
      * @return the Id
@@ -55,50 +86,92 @@ public class GameRound {
     public void setRound(Round Round) {
         this.Round = Round;
     }
-
+    
+    @Id
+    @Column(name = "ID", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long Id;
+    
+    @ManyToOne
+    @JoinColumn (name="GameId")
+    @JsonBackReference
+    private Game Game;
+    
+    @ManyToOne
+    @JoinColumn (name="RoundId")
+    @JsonBackReference
+    private Round Round;
+    
+    @Column(name = "RoundLeaderPoint",nullable = true)
+    private int roundLeaderPoint;
+    
+    @Column(name = "RoundLeaderId",nullable = true)
+    private Long roundLeaderId;
+    
+    @OneToMany(mappedBy = "GameRound")
+    private Set<GameRoundPlayer> GameRoundPlayer = new HashSet<GameRoundPlayer>();
+    
+    @OneToMany(mappedBy = "GameRound")
+    private Set<PlayerPurchase> PlayerPurchase = new HashSet<PlayerPurchase>();
+    
+    @OneToMany(mappedBy = "GameRound")
+    private Set<PlayerTransactions> PlayerTransactions = new HashSet<PlayerTransactions>();
+    
+    @OneToMany(mappedBy = "GameRound")
+    private Set<GameRoundCompany> GameRoundCompany = new HashSet<GameRoundCompany>();
     /**
      * @return the GameRoundPlayer
      */
-    public GameRoundPlayer getGameRoundPlayer() {
+    public Set<GameRoundPlayer> getGameRoundPlayer() {
         return GameRoundPlayer;
     }
 
     /**
      * @param GameRoundPlayer the GameRoundPlayer to set
      */
-    public void setGameRoundPlayer(GameRoundPlayer GameRoundPlayer) {
+    public void setGameRoundPlayer(Set<GameRoundPlayer> GameRoundPlayer) {
         this.GameRoundPlayer = GameRoundPlayer;
     }
 
     /**
      * @return the PlayerPurchase
      */
-    public PlayerPurchase getPlayerPurchase() {
+    public Set<PlayerPurchase> getPlayerPurchase() {
         return PlayerPurchase;
     }
 
     /**
      * @param PlayerPurchase the PlayerPurchase to set
      */
-    public void setPlayerPurchase(PlayerPurchase PlayerPurchase) {
+    public void setPlayerPurchase(Set<PlayerPurchase> PlayerPurchase) {
         this.PlayerPurchase = PlayerPurchase;
     }
-    @Id
-    @Column(name = "ID", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
-    
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn (name="GameId")
-    private Game Game;
-    
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn (name="RoundId")
-    private Round Round;
-    
-    @OneToOne(mappedBy="GameRound")
-    private GameRoundPlayer GameRoundPlayer;
-    
-    @OneToOne(mappedBy="GameRound")
-    private PlayerPurchase PlayerPurchase;
+
+    /**
+     * @return the PlayerTransactions
+     */
+    public Set<PlayerTransactions> getPlayerTransactions() {
+        return PlayerTransactions;
+    }
+
+    /**
+     * @param PlayerTransactions the PlayerTransactions to set
+     */
+    public void setPlayerTransactions(Set<PlayerTransactions> PlayerTransactions) {
+        this.PlayerTransactions = PlayerTransactions;
+    }
+
+    /**
+     * @return the GameRoundCompany
+     */
+    public Set<GameRoundCompany> getGameRoundCompany() {
+        return GameRoundCompany;
+    }
+
+    /**
+     * @param GameRoundCompany the GameRoundCompany to set
+     */
+    public void setGameRoundCompany(Set<GameRoundCompany> GameRoundCompany) {
+        this.GameRoundCompany = GameRoundCompany;
+    }
 }

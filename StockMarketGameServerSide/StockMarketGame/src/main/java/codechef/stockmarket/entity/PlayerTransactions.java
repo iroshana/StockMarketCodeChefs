@@ -5,6 +5,7 @@
  */
 package codechef.stockmarket.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 
 /**
@@ -41,21 +42,6 @@ public class PlayerTransactions {
     public void setBank(Bank Bank) {
         this.Bank = Bank;
     }
-
-    /**
-     * @return the Round
-     */
-    public Round getRound() {
-        return Round;
-    }
-
-    /**
-     * @param Round the Round to set
-     */
-    public void setRound(Round Round) {
-        this.Round = Round;
-    }
-
     /**
      * @return the Game
      */
@@ -102,20 +88,37 @@ public class PlayerTransactions {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn (name="BankId")
+    @JsonBackReference
     private Bank Bank;
     
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn (name="RoundId")
-    private Round Round;
+    @ManyToOne
+    @JoinColumn (name="GameRoundId")
+    @JsonBackReference
+    private GameRound GameRound;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn (name="GameId")
+    @JsonBackReference
     private Game Game;
     
     @Column(name = "Amount")
     private float Amount;
      @Column(name = "Time")
     private String Time;
+
+    /**
+     * @return the GameRound
+     */
+    public GameRound getGameRound() {
+        return GameRound;
+    }
+
+    /**
+     * @param GameRound the GameRound to set
+     */
+    public void setGameRound(GameRound GameRound) {
+        this.GameRound = GameRound;
+    }
 }

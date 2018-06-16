@@ -12,5 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author thari
  */
-public interface PlayerRepository  extends JpaRepository<Player, Long>{
+public interface GameRoundCompanyRepository  extends JpaRepository<GameRoundCompany, Long>{
+    
 }

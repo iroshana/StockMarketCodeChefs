@@ -5,11 +5,14 @@
  */
 package codechef.stockmarket.entity;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -29,9 +32,8 @@ public class Broker {
     @Column(name = "Rating")
     private int Rating;
     
-    @OneToOne(mappedBy="Broker")
-    private GamePlayer GamePlayer;
-
+    @OneToMany(mappedBy = "Broker")
+    private Set<GamePlayer> GamePlayer = new HashSet<GamePlayer>();
     /**
      * @return the Id
      */
@@ -77,14 +79,15 @@ public class Broker {
     /**
      * @return the GamePlayer
      */
-    public GamePlayer getGamePlayer() {
+    public Set<GamePlayer> getGamePlayer() {
         return GamePlayer;
     }
 
     /**
      * @param GamePlayer the GamePlayer to set
      */
-    public void setGamePlayer(GamePlayer GamePlayer) {
+    public void setGamePlayer(Set<GamePlayer> GamePlayer) {
         this.GamePlayer = GamePlayer;
     }
+
 }

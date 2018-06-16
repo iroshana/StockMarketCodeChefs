@@ -6,6 +6,8 @@
 package codechef.stockmarket.entity;
 
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -14,48 +16,6 @@ import javax.persistence.*;
  */
 @Entity
 public class Round {
-
-    /**
-     * @return the GameRound
-     */
-    public GameRound getGameRound() {
-        return GameRound;
-    }
-
-    /**
-     * @param GameRound the GameRound to set
-     */
-    public void setGameRound(GameRound GameRound) {
-        this.GameRound = GameRound;
-    }
-
-    /**
-     * @return the Player
-     */
-    public Player getPlayer() {
-        return Player;
-    }
-
-    /**
-     * @param Player the Player to set
-     */
-    public void setPlayer(Player Player) {
-        this.Player = Player;
-    }
-
-    /**
-     * @return the RoundLeaderPoint
-     */
-    public int getRoundLeaderPoint() {
-        return RoundLeaderPoint;
-    }
-
-    /**
-     * @param RoundLeaderPoint the RoundLeaderPoint to set
-     */
-    public void setRoundLeaderPoint(int RoundLeaderPoint) {
-        this.RoundLeaderPoint = RoundLeaderPoint;
-    }
 
     /**
      * @return the Id
@@ -75,14 +35,14 @@ public class Round {
      * @return the RoundNo
      */
     public int getRoundNo() {
-        return RoundNo;
+        return roundNo;
     }
 
     /**
      * @param RoundNo the RoundNo to set
      */
     public void setRoundNo(int RoundNo) {
-        this.RoundNo = RoundNo;
+        this.roundNo = RoundNo;
     }
 
     @Id
@@ -91,15 +51,23 @@ public class Round {
     private Long Id;
 
     @Column(name = "RoundNo")
-    private int RoundNo;
+    private int roundNo;
 
-    @OneToOne(mappedBy="Round")
-    private GameRound GameRound;
+    @OneToMany(mappedBy = "Round")
+    private Set<GameRound> GameRound = new HashSet<GameRound>();
     
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn (name="LeaderId")
-    private Player Player;
-    
-    @Column(name = "RoundLeaderPoint")
-    private int RoundLeaderPoint;
+
+    /**
+     * @return the GameRound
+     */
+    public Set<GameRound> getGameRound() {
+        return GameRound;
+    }
+
+    /**
+     * @param GameRound the GameRound to set
+     */
+    public void setGameRound(Set<GameRound> GameRound) {
+        this.GameRound = GameRound;
+    }
 }

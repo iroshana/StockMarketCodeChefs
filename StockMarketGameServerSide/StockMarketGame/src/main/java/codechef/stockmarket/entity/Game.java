@@ -20,7 +20,7 @@ public class Game {
     @Id
     @Column(name = "ID", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+    private Long id;
     
     @Column(name = "NoOfPlayers")
     private int NoOfPlayers;
@@ -33,32 +33,32 @@ public class Game {
     
     @Column(name = "GameLeaderPoint")
     private int GameLeaderPoint;
-    @Column(name = "GameLeaderId")
-    private int GameLeaderId;
+    @Column(name = "GameLeaderId",nullable = true)
+    private Long GameLeaderId;
     
-    @OneToOne(mappedBy="Game")
-    private GamePlayer GamePlayer;
+    @OneToMany(mappedBy = "Game")
+    private Set<GamePlayer> GamePlayers = new HashSet<GamePlayer>();
     
-    @OneToOne(mappedBy="Game")
-    private PlayerTransactions PlayerTransactions;
+    @OneToMany(mappedBy = "Game")
+    private Set<PlayerTransactions> PlayerTransactions = new HashSet<PlayerTransactions>();
     
-    @OneToOne(mappedBy="Game")
-    private GameRound GameRound;
+    @OneToMany(mappedBy = "Game")
+    private Set<GameRound> GameRounds = new HashSet<GameRound>();
     
-    @OneToOne(mappedBy="Game")
-    private GameCompany GameCompany;
+    @OneToMany(mappedBy = "Game")
+    private Set<GameCompany> GameCompany = new HashSet<GameCompany>();
     /**
      * @return the Id
      */
     public Long getId() {
-        return Id;
+        return id;
     }
 
     /**
      * @param Id the Id to set
      */
     public void setId(Long Id) {
-        this.Id = Id;
+        this.id = Id;
     }
 
     /**
@@ -120,70 +120,70 @@ public class Game {
     /**
      * @return the GameLeaderId
      */
-    public int getGameLeaderId() {
+    public Long getGameLeaderId() {
         return GameLeaderId;
     }
 
     /**
      * @param GameLeaderId the GameLeaderId to set
      */
-    public void setGameLeaderId(int GameLeaderId) {
+    public void setGameLeaderId(Long GameLeaderId) {
         this.GameLeaderId = GameLeaderId;
     }
 
     /**
-     * @return the GamePlayer
+     * @return the GamePlayers
      */
-    public GamePlayer getGamePlayer() {
-        return GamePlayer;
+    public Set<GamePlayer> getGamePlayers() {
+        return GamePlayers;
     }
 
     /**
-     * @param GamePlayer the GamePlayer to set
+     * @param GamePlayers the GamePlayers to set
      */
-    public void setGamePlayer(GamePlayer GamePlayer) {
-        this.GamePlayer = GamePlayer;
+    public void setGamePlayers(Set<GamePlayer> GamePlayers) {
+        this.GamePlayers = GamePlayers;
     }
 
     /**
      * @return the PlayerTransactions
      */
-    public PlayerTransactions getPlayerTransactions() {
+    public Set<PlayerTransactions> getPlayerTransactions() {
         return PlayerTransactions;
     }
 
     /**
      * @param PlayerTransactions the PlayerTransactions to set
      */
-    public void setPlayerTransactions(PlayerTransactions PlayerTransactions) {
+    public void setPlayerTransactions(Set<PlayerTransactions> PlayerTransactions) {
         this.PlayerTransactions = PlayerTransactions;
     }
 
     /**
-     * @return the GameRound
+     * @return the GameRounds
      */
-    public GameRound getGameRound() {
-        return GameRound;
+    public Set<GameRound> getGameRounds() {
+        return GameRounds;
     }
 
     /**
-     * @param GameRound the GameRound to set
+     * @param GameRounds the GameRounds to set
      */
-    public void setGameRound(GameRound GameRound) {
-        this.GameRound = GameRound;
+    public void setGameRounds(Set<GameRound> GameRounds) {
+        this.GameRounds = GameRounds;
     }
 
     /**
      * @return the GameCompany
      */
-    public GameCompany getGameCompany() {
+    public Set<GameCompany> getGameCompany() {
         return GameCompany;
     }
 
     /**
      * @param GameCompany the GameCompany to set
      */
-    public void setGameCompany(GameCompany GameCompany) {
+    public void setGameCompany(Set<GameCompany> GameCompany) {
         this.GameCompany = GameCompany;
     }
 

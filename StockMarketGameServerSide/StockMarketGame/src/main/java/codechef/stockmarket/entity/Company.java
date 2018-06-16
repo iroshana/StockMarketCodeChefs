@@ -6,6 +6,8 @@
 package codechef.stockmarket.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.*;
 
 /**
@@ -51,8 +53,21 @@ public class Company {
     @JsonBackReference
     private Sector Sector;
     
-    @OneToOne(mappedBy="Company")
-    private GameCompany GameCompany;
+    @OneToMany(mappedBy = "Game")
+    private Set<GameCompany> GameCompany = new HashSet<GameCompany>();
+    
+    public Company(){
+        
+    }
+    
+    public Company(String name,int grade,int noOfShares,double shareValue,Sector sector,GameCompany gameCompany){
+        super();
+	this.Name = name;
+	this.Grade = grade;
+        this.NoOfShares = noOfShares;
+	this.ShareValue = shareValue;
+        this.Sector = sector;
+    }
     /**
      * @return the Id
      */
@@ -123,18 +138,4 @@ public class Company {
         this.ShareValue = ShareValue;
     }
 
-    /**
-     * @return the GameCompany
-     */
-    public GameCompany getGameCompany() {
-        return GameCompany;
-    }
-
-    /**
-     * @param GameCompany the GameCompany to set
-     */
-    public void setGameCompany(GameCompany GameCompany) {
-        this.GameCompany = GameCompany;
-    }
-    
 }

@@ -1,0 +1,192 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package codechef.stockmarket.restcontroller;
+
+import codechef.stockmarket.common.CommonUtil;
+import codechef.stockmarket.common.ViewModels.*;
+import codechef.stockmarket.entity.*;
+import codechef.stockmarket.repository.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ *
+ * @author thari
+ */
+@RestController
+@RequestMapping("/Game")
+public class GameController {
+    @Autowired
+    GameRepository gameRepository = null;
+    @Autowired
+    GameCompanyRepository gameCompanyRepository = null;
+    @Autowired
+    GamePlayerRepository gamePlayerRepository = null;
+    @Autowired
+    GameRoundRepository gameRoundRepository = null;
+    @Autowired
+    GameRoundPlayerRepository gameRoundPlayerRepository = null;
+    @Autowired
+    BankRepository bankRepository = null;
+    @Autowired
+    BrokerRepository brokerRepository = null;
+    @Autowired
+    PlayerRepository playerRepository = null;
+    @Autowired
+    CompanyRepository companyRepository = null;
+    @Autowired
+    RoundRepository roundRepository = null;
+    @Autowired
+    GameRoundCompanyRepository gameRoundCompanyRepository = null;
+    
+    @CrossOrigin
+    @RequestMapping(value = "/Create/", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
+    public ResponseEntity saveTest(@RequestBody GameStartViewModel gamePlayer){
+        Game response1 = null;
+        
+        GamePlayer response3 = null;
+        GameRound response4 = null;
+        GameRoundPlayer response5 = null;
+        ResponseViewModel responseData = new ResponseViewModel();
+        if(gamePlayer != null){
+            Game game = new Game();
+            game.setNoOfPlayers(1);
+            game.setGameLeaderPoint(0);
+            game.setNoOfRounds(5);
+            response1 = gameRepository.save(game);
+            
+            Bank bank = bankRepository.findById(gamePlayer.getBankId()).get();
+            Broker broker = brokerRepository.findById(gamePlayer.getBrokerId()).get();
+            Player gplayer = playerRepository.findById(gamePlayer.getPlayerId()).get();
+            List<Company> gCompanyList = companyRepository.findAll();
+            
+            GamePlayer player = new GamePlayer();
+            player.setBank(bank);
+            player.setBankBalance(0);
+            player.setBroker(broker);
+            player.setGame(response1);
+            player.setHighScore(0);
+            player.setPlayer(gplayer);
+            player.setTotalPurchase(0);
+            player.setTotalSales(0);
+            response3 = gamePlayerRepository.save(player);
+            
+            Round roundOne = roundRepository.findByRoundNo(1);
+            
+            GameRound round = new GameRound();
+            round.setGame(game);
+            round.setRound(roundOne);
+            round.setRoundLeaderId(null);
+            round.setRoundLeaderPoint(0);
+            
+            response4 = gameRoundRepository.save(round);
+            
+            for(Company company : gCompanyList){
+                
+                GameCompany response2 = null;
+                
+                GameCompany gCompany = new GameCompany();
+                gCompany.setGame(game);
+                gCompany.setCompany(company);
+                gCompany.setNoOfShares(company.getNoOfShares());
+                gCompany.setShareValue(company.getShareValue());
+                
+                response2 = gameCompanyRepository.save(gCompany);
+                
+                GameRoundCompany roundCompany = new GameRoundCompany();
+                roundCompany.setGameCompany(response2);
+                roundCompany.setGameRound(response4);
+                roundCompany.setShareValue(company.getShareValue());
+                
+                gameRoundCompanyRepository.save(roundCompany);
+            }
+            
+            
+            GameRoundPlayer roundPlayer = new GameRoundPlayer();
+            roundPlayer.setGameRound(round);
+            roundPlayer.setPlayer(gplayer);
+            roundPlayer.setScore(0);
+            
+            response5 = gameRoundPlayerRepository.save(roundPlayer);
+            
+            responseData.setGameId(response1.getId());
+            responseData.setGameRoundId(response4.getId());
+            responseData.setRoundId(response4.getId());
+            responseData.setGamePlayerId(response3.getId());
+            responseData.setGameRoundPlayerId(response5.getId());
+            responseData.setRoundNo(response4.getRound().getRoundNo());
+        }
+        
+        
+        if(response1 == null ||response3 == null||response4 == null||response5 == null){
+            return new ResponseEntity(response1, HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity(responseData, HttpStatus.OK);
+        }
+    }
+    
+    @RequestMapping(value = "/GetAllGame/{gameId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
+    public GameViewModel getNoteById(@PathVariable(value = "gameId") Long gameId) {
+        GameViewModel data = new GameViewModel();
+        Game game = gameRepository.findById(gameId).get();
+        
+        data.setId(game.getId());
+        data.setNoOfPlayers(game.getNoOfPlayers());
+        data.setCurrentRounds(game.getCurrentRounds());
+        data.setGameLeaderId(game.getGameLeaderId());
+        data.setNoOfRounds(game.getNoOfRounds());
+        
+        Set<PlayerViewModel> gamePlayer = new HashSet<PlayerViewModel>();
+        for(GamePlayer player : game.getGamePlayers()){
+            PlayerViewModel play = new PlayerViewModel();
+            play.setId(player.getId());
+            play.setName(player.getPlayer().getName());
+            play.setEmail(player.getPlayer().getEmail());
+            play.setRating(player.getPlayer().getRating());
+            
+            gamePlayer.add(play);
+        }
+        
+        data.setGamePlayer(gamePlayer);
+        
+        Set<CompanyViewModel> companyView = new HashSet<CompanyViewModel>();
+        for(GameCompany company : game.getGameCompany()){
+            CompanyViewModel comp = new CompanyViewModel();
+            comp.setId(company.getId());
+            comp.setName(company.getCompany().getName());
+            comp.setNoOFShares(company.getNoOfShares());
+            comp.setShareValue(company.getShareValue());
+            
+            companyView.add(comp);
+        }
+        data.setGameCompany(companyView);
+        
+        Set<RoundViewModel> roundView = new HashSet<RoundViewModel>();
+        for(GameRound round : game.getGameRounds()){
+            RoundViewModel roundViewModel = new RoundViewModel();
+            roundViewModel.setId(round.getId());
+            roundViewModel.setNo(round.getRound().getRoundNo());
+            roundViewModel.setLeaderId(round.getRoundLeaderId() == null ? 0 : round.getRoundLeaderId());
+            roundViewModel.setLeaderpoint(0);
+            roundView.add(roundViewModel);
+        }
+        data.setGameRound(roundView);
+        
+        return data;
+    }
+}

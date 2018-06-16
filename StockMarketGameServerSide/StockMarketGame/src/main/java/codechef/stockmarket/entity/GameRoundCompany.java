@@ -6,22 +6,40 @@
 package codechef.stockmarket.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 
 /**
  *
  * @author thari
  */
 @Entity
-public class GameRoundPlayer {
+public class GameRoundCompany {
+    @Id
+    @Column(name = "ID", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long Id;
+    
+    @ManyToOne
+    @JoinColumn (name="GameRoundId")
+    @JsonBackReference
+    private GameRound GameRound;
+    
+    @ManyToOne
+    @JoinColumn (name="GameCompanyId")
+    @JsonBackReference
+    private GameCompany GameCompany;
+    
+    @Column(name = "ShareValue")
+    private double ShareValue;
 
     /**
      * @return the Id
@@ -52,48 +70,31 @@ public class GameRoundPlayer {
     }
 
     /**
-     * @return the Player
+     * @return the GameCompany
      */
-    public Player getPlayer() {
-        return Player;
+    public GameCompany getGameCompany() {
+        return GameCompany;
     }
 
     /**
-     * @param Player the Player to set
+     * @param GameCompany the GameCompany to set
      */
-    public void setPlayer(Player Player) {
-        this.Player = Player;
+    public void setGameCompany(GameCompany GameCompany) {
+        this.GameCompany = GameCompany;
     }
 
     /**
-     * @return the Score
+     * @return the ShareValue
      */
-    public double getScore() {
-        return Score;
+    public double getShareValue() {
+        return ShareValue;
     }
 
     /**
-     * @param Score the Score to set
+     * @param ShareValue the ShareValue to set
      */
-    public void setScore(double Score) {
-        this.Score = Score;
+    public void setShareValue(double ShareValue) {
+        this.ShareValue = ShareValue;
     }
-    @Id
-    @Column(name = "ID", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
-
-    @ManyToOne
-    @JoinColumn (name="GameRoundId")
-    @JsonBackReference
-    private GameRound GameRound;
-    
-    @ManyToOne
-    @JoinColumn (name="PlayerId")
-    @JsonBackReference
-    private Player Player;
-    
-    @Column(name = "Score")
-    private double Score;
     
 }

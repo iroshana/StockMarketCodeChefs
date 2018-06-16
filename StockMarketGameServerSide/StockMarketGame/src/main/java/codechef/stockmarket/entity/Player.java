@@ -22,47 +22,6 @@ import javax.persistence.OneToOne;
 @Entity
 public class Player {
 
-    /**
-     * @return the GamePlayer
-     */
-    public GamePlayer getGamePlayer() {
-        return GamePlayer;
-    }
-
-    /**
-     * @param GamePlayer the GamePlayer to set
-     */
-    public void setGamePlayer(GamePlayer GamePlayer) {
-        this.GamePlayer = GamePlayer;
-    }
-
-    /**
-     * @return the Round
-     */
-    public Round getRound() {
-        return Round;
-    }
-
-    /**
-     * @param Round the Round to set
-     */
-    public void setRound(Round Round) {
-        this.Round = Round;
-    }
-
-    /**
-     * @return the GameRoundPlayer
-     */
-    public GameRoundPlayer getGameRoundPlayer() {
-        return GameRoundPlayer;
-    }
-
-    /**
-     * @param GameRoundPlayer the GameRoundPlayer to set
-     */
-    public void setGameRoundPlayer(GameRoundPlayer GameRoundPlayer) {
-        this.GameRoundPlayer = GameRoundPlayer;
-    }
     @Id
     @Column(name = "ID", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -77,15 +36,11 @@ public class Player {
     @Column(name = "Email")
     private String Email;
     
-    @OneToOne(mappedBy="Player")
-    private GamePlayer GamePlayer;
+    @OneToMany(mappedBy = "Player")
+    private Set<GamePlayer> GamePlayer = new HashSet<GamePlayer>();
     
-    @OneToOne(mappedBy="Player")
-    private Round Round;
-    
-    @OneToOne(mappedBy="Player")
-    private GameRoundPlayer GameRoundPlayer;
-    
+    @OneToMany(mappedBy = "Player")
+    private Set<GameRoundPlayer> GameRoundPlayer = new HashSet<GameRoundPlayer>();
     /**
      * @return the Id
      */
@@ -140,6 +95,34 @@ public class Player {
      */
     public void setEmail(String Email) {
         this.Email = Email;
+    }
+
+    /**
+     * @return the GamePlayer
+     */
+    public Set<GamePlayer> getGamePlayer() {
+        return GamePlayer;
+    }
+
+    /**
+     * @param GamePlayer the GamePlayer to set
+     */
+    public void setGamePlayer(Set<GamePlayer> GamePlayer) {
+        this.GamePlayer = GamePlayer;
+    }
+
+    /**
+     * @return the GameRoundPlayer
+     */
+    public Set<GameRoundPlayer> getGameRoundPlayer() {
+        return GameRoundPlayer;
+    }
+
+    /**
+     * @param GameRoundPlayer the GameRoundPlayer to set
+     */
+    public void setGameRoundPlayer(Set<GameRoundPlayer> GameRoundPlayer) {
+        this.GameRoundPlayer = GameRoundPlayer;
     }
 
 }

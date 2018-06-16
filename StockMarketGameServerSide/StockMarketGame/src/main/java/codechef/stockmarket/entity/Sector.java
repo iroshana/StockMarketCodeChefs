@@ -24,6 +24,9 @@ public class Sector {
     
     @OneToMany(mappedBy = "Sector")
     private Set<Company> Company = new HashSet<Company>();
+    
+    
+    
     /**
      * @return the Id
      */

@@ -5,11 +5,14 @@
  */
 package codechef.stockmarket.entity;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 /**
@@ -47,33 +50,6 @@ public class Bank {
         this.Name = Name;
     }
 
-    /**
-     * @return the GamePlayer
-     */
-    public GamePlayer getGamePlayer() {
-        return GamePlayer;
-    }
-
-    /**
-     * @param GamePlayer the GamePlayer to set
-     */
-    public void setGamePlayer(GamePlayer GamePlayer) {
-        this.GamePlayer = GamePlayer;
-    }
-
-    /**
-     * @return the PlayerTransactions
-     */
-    public PlayerTransactions getPlayerTransactions() {
-        return PlayerTransactions;
-    }
-
-    /**
-     * @param PlayerTransactions the PlayerTransactions to set
-     */
-    public void setPlayerTransactions(PlayerTransactions PlayerTransactions) {
-        this.PlayerTransactions = PlayerTransactions;
-    }
     @Id
     @Column(name = "ID", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -82,9 +58,36 @@ public class Bank {
     @Column(name = "Name")
     private String Name;
     
-    @OneToOne(mappedBy="Bank")
-    private GamePlayer GamePlayer;
+    @OneToMany(mappedBy = "Bank")
+    private Set<GamePlayer> GamePlayer = new HashSet<GamePlayer>();
     
-    @OneToOne(mappedBy="Bank")
-    private PlayerTransactions PlayerTransactions;
+    @OneToMany(mappedBy = "Bank")
+    private Set<PlayerTransactions> PlayerTransactions = new HashSet<PlayerTransactions>();
+    /**
+     * @return the GamePlayer
+     */
+    public Set<GamePlayer> getGamePlayer() {
+        return GamePlayer;
+    }
+
+    /**
+     * @param GamePlayer the GamePlayer to set
+     */
+    public void setGamePlayer(Set<GamePlayer> GamePlayer) {
+        this.GamePlayer = GamePlayer;
+    }
+
+    /**
+     * @return the PlayerTransactions
+     */
+    public Set<PlayerTransactions> getPlayerTransactions() {
+        return PlayerTransactions;
+    }
+
+    /**
+     * @param PlayerTransactions the PlayerTransactions to set
+     */
+    public void setPlayerTransactions(Set<PlayerTransactions> PlayerTransactions) {
+        this.PlayerTransactions = PlayerTransactions;
+    }
 }

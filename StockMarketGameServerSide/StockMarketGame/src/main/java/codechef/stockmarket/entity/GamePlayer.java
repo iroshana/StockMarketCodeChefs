@@ -5,6 +5,7 @@
  */
 package codechef.stockmarket.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import javax.persistence.*;
 
 /**
@@ -47,6 +48,7 @@ public class GamePlayer {
      * @return the Player
      */
     public Player getPlayer() {
+        
         return Player;
     }
 
@@ -145,20 +147,24 @@ public class GamePlayer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
    
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn (name="GameId")
+    @JsonBackReference
     private Game Game;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn (name="PlayerId")
+    @JsonBackReference
     private Player Player;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn (name="BankId")
+    @JsonBackReference
     private Bank Bank;
     
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn (name="BrokerId")
+    @JsonBackReference
     private Broker Broker;
     
     @Column(name = "Bankbalance")
