@@ -9,6 +9,7 @@ import codechef.stockmarket.common.CommonUtil;
 import codechef.stockmarket.common.ViewModels.*;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
+import codechef.stockmarket.service.BOTService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -57,9 +58,12 @@ public class GameController {
     @Autowired
     WatchListRepository watchListRepository = null;
     
+    BOTService botService = null;
+    
     @CrossOrigin
     @RequestMapping(value = "/Create/", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
     public ResponseEntity saveTest(@RequestBody GameStartViewModel gamePlayer){
+        botService = new BOTService();
         Game response1 = null;
         
         GamePlayer response3 = null;
@@ -128,14 +132,18 @@ public class GameController {
             
             response5 = gameRoundPlayerRepository.save(roundPlayer);
             
+            gplayer.setIsPlaying(true);
+            playerRepository.save(gplayer);
+            
+            botService.AddPlayersToGame(response1,response4);
+            
             responseData.setGameId(response1.getId());
             responseData.setGameRoundId(response4.getId());
             responseData.setRoundId(response4.getId());
             responseData.setGamePlayerId(response3.getId());
             responseData.setGameRoundPlayerId(response5.getId());
             responseData.setRoundNo(response4.getRound().getRoundNo());
-        }
-        
+        }        
         
         if(response1 == null ||response3 == null||response4 == null||response5 == null){
             return new ResponseEntity(response1, HttpStatus.BAD_REQUEST);
@@ -206,7 +214,7 @@ public class GameController {
         for(GameRoundCompany roundCompany : gameCompanyList){
             CompanyViewModel company = new CompanyViewModel();
             
-            company.setId(roundCompany.getGameCompany().getCompany().getId());
+            company.setId(roundCompany.getGameCompany().getId());
             company.setName(roundCompany.getGameCompany().getCompany().getName());
             company.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
             company.setShareValue(roundCompany.getShareValue());
@@ -256,5 +264,40 @@ public class GameController {
             
         }
         return player;
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/CreateWatch", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
+    public ResponseEntity saveWatch(@RequestBody CompanyViewModel companyView){
+        WatchList response = null;
+        if(companyView != null){
+            
+            GamePlayer player = gamePlayerRepository.findById(companyView.getGamePlayerId()).get();
+            GameCompany company = gameCompanyRepository.findById(companyView.getId()).get();
+            
+            WatchList watchListView = new WatchList();
+            watchListView.setGameCompany(company);
+            watchListView.setGamePlayer(player);
+            
+            response = watchListRepository.save(watchListView);
+            
+        }
+        if(response == null){
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity(response, HttpStatus.OK);
+        }
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/CompleteRound", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
+    public ResponseEntity CompleteRound(@RequestBody CompanyViewModel companyView){
+        WatchList response = null;
+        
+        if(response == null){
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity(response, HttpStatus.OK);
+        }
     }
 }

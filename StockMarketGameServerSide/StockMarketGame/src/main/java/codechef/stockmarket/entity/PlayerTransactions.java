@@ -88,7 +88,7 @@ public class PlayerTransactions {
     @ManyToOne
     @JoinColumn (name="GamePlayerId")
     @JsonBackReference
-    private GameRoundPlayer GamePlayer;
+    private GamePlayer GamePlayer;
     
     @Column(name = "Amount")
     private float Amount;
@@ -114,14 +114,14 @@ public class PlayerTransactions {
     /**
      * @return the GamePlayer
      */
-    public GameRoundPlayer getGamePlayer() {
+    public GamePlayer getGamePlayer() {
         return GamePlayer;
     }
 
     /**
      * @param GamePlayer the GamePlayer to set
      */
-    public void setGamePlayer(GameRoundPlayer GamePlayer) {
+    public void setGamePlayer(GamePlayer GamePlayer) {
         this.GamePlayer = GamePlayer;
     }
 

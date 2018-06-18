@@ -118,7 +118,7 @@ public class GameCompany {
     private double ShareValue;
     
     @OneToMany(mappedBy = "GameCompany")
-    private Set<PlayerPurchase> PlayerPurchase = new HashSet<PlayerPurchase>();
+    private Set<Playerpurchase> PlayerPurchase = new HashSet<Playerpurchase>();
 
     @OneToMany(mappedBy = "GameCompany")
     private Set<GameRoundCompany> GameRoundCompany = new HashSet<GameRoundCompany>();
@@ -128,14 +128,14 @@ public class GameCompany {
     /**
      * @return the PlayerPurchase
      */
-    public Set<PlayerPurchase> getPlayerPurchase() {
+    public Set<Playerpurchase> getPlayerPurchase() {
         return PlayerPurchase;
     }
 
     /**
      * @param PlayerPurchase the PlayerPurchase to set
      */
-    public void setPlayerPurchase(Set<PlayerPurchase> PlayerPurchase) {
+    public void setPlayerPurchase(Set<Playerpurchase> PlayerPurchase) {
         this.PlayerPurchase = PlayerPurchase;
     }
 

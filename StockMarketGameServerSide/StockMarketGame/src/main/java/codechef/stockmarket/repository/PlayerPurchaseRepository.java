@@ -12,6 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author thari
  */
-public interface PlayerPurchaseRepository extends JpaRepository<PlayerPurchase, Long>{
+public interface PlayerPurchaseRepository extends JpaRepository<Playerpurchase, Long>{
     
 }
