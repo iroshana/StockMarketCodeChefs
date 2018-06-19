@@ -44,6 +44,7 @@ codechef\stockmarket\service\GameRoundService.class
 codechef\stockmarket\common\ViewModels\BrokerViewModel.class
 codechef\stockmarket\repository\GameRoundPlayerRepository.class
 codechef\stockmarket\restcontroller\TestController.class
+codechef\stockmarket\service\AnalizeService$1.class
 codechef\stockmarket\repository\PlayerTransactionRepository.class
 codechef\stockmarket\repository\PlayerPurchaseRepository.class
 codechef\stockmarket\common\ViewModels\GameViewModel.class

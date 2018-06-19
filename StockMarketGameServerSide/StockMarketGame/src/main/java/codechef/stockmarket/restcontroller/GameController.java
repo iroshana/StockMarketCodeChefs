@@ -57,13 +57,18 @@ public class GameController {
     GameRoundCompanyRepository gameRoundCompanyRepository = null;
     @Autowired
     WatchListRepository watchListRepository = null;
-    
+    @Autowired
+    PlayerPurchaseRepository playerPurchaseRepository = null;
+    @Autowired
+    PlayerTransactionRepository playerTransactionRepository = null;
     BOTService botService = null;
     
     @CrossOrigin
     @RequestMapping(value = "/Create/", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
     public ResponseEntity saveTest(@RequestBody GameStartViewModel gamePlayer){
-        botService = new BOTService();
+        botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
+            gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
+            gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
         Game response1 = null;
         
         GamePlayer response3 = null;
@@ -85,7 +90,7 @@ public class GameController {
             
             GamePlayer player = new GamePlayer();
             player.setBank(bank);
-            player.setBankBalance(0);
+            player.setBankBalance(gamePlayer.getBankBalance());
             player.setBroker(broker);
             player.setGame(response1);
             player.setHighScore(0);
@@ -135,7 +140,7 @@ public class GameController {
             gplayer.setIsPlaying(true);
             playerRepository.save(gplayer);
             
-            botService.AddPlayersToGame(response1,response4);
+            botService.AddPlayersToGame(response1,response4,playerRepository,gamePlayerRepository);
             
             responseData.setGameId(response1.getId());
             responseData.setGameRoundId(response4.getId());
@@ -299,5 +304,15 @@ public class GameController {
         }else{
             return new ResponseEntity(response, HttpStatus.OK);
         }
+    }
+    
+     @RequestMapping(value = "/GetAllPlayer", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
+    public List<Long> getAllPlayer() {
+        List<Long> data = new ArrayList();
+        List<Player> players = playerRepository.findAll();
+        for(Player pl : players){
+            data.add(pl.getId());
+        }
+        return data;
     }
 }

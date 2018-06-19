@@ -8,6 +8,7 @@ package codechef.stockmarket.service;
 import codechef.stockmarket.common.ViewModels.*;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
+import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,34 +17,57 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author thari
  */
 public class GameService {
-    @Autowired
     GameRepository gameRepository = null;
-    @Autowired
+    
     GameCompanyRepository gameCompanyRepository = null;
-    @Autowired
+    
     GamePlayerRepository gamePlayerRepository = null;
-    @Autowired
+    
     GameRoundRepository gameRoundRepository = null;
-    @Autowired
+    
     GameRoundPlayerRepository gameRoundPlayerRepository = null;
-    @Autowired
+    
     BankRepository bankRepository = null;
-    @Autowired
+    
     BrokerRepository brokerRepository = null;
-    @Autowired
+    
     PlayerRepository playerRepository = null;
-    @Autowired
+    
     CompanyRepository companyRepository = null;
-    @Autowired
+    
     RoundRepository roundRepository = null;
-    @Autowired
+    
     GameRoundCompanyRepository gameRoundCompanyRepository = null;
-    @Autowired
+    
     WatchListRepository watchListRepository = null;
     
+    PlayerPurchaseRepository playerPurchaseRepository = null;
+    
+    PlayerTransactionRepository playerTransactionRepository = null;
+    public GameService(GameRepository _gameRepository,GameCompanyRepository _gameCompanyRepository,GamePlayerRepository _gamePlayerRepository,PlayerRepository _playerRepository,RoundRepository _roundRepository,
+            GameRoundRepository _gameRoundRepository,GameRoundPlayerRepository _gameRoundPlayerRepository,BankRepository _bankRepository,BrokerRepository _brokerRepository,CompanyRepository _companyRepository,
+            GameRoundCompanyRepository _gameRoundCompanyRepository,WatchListRepository _watchListRepository,PlayerPurchaseRepository _playerPurchaseRepository,PlayerTransactionRepository _playerTransactionRepository)
+    {
+        gameRepository=_gameRepository;
+        gameCompanyRepository=_gameCompanyRepository;
+        gamePlayerRepository=_gamePlayerRepository;
+        gameRoundRepository=_gameRoundRepository;
+        gameRoundPlayerRepository=_gameRoundPlayerRepository;
+        bankRepository=_bankRepository;
+        brokerRepository=_brokerRepository;
+        playerRepository=_playerRepository;
+        companyRepository=_companyRepository;
+        roundRepository=_roundRepository;
+        gameRoundCompanyRepository=_gameRoundCompanyRepository;
+        watchListRepository=_watchListRepository;
+        playerPurchaseRepository=_playerPurchaseRepository;
+        playerTransactionRepository=_playerTransactionRepository;
+    }
     BOTService botService = null;
     public void CompleteGame(CompanyViewModel companyView){
-        botService = new BOTService();
+        botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
+            gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
+            gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
         
         if(companyView != null){
             GameRound responseGR = null;
@@ -53,7 +77,7 @@ public class GameService {
             Set<GamePlayer> players = game.getGamePlayers();
             
             botService.play(game, gRound);
-            int hs = botService.SetHighestScore(game, gRound);
+            List<GamePlayer> gamePlayers = botService.SetScore(game, gRound, players);
             
             Set<GameRoundCompany> gRoundCompanies = gRound.getGameRoundCompany();
             

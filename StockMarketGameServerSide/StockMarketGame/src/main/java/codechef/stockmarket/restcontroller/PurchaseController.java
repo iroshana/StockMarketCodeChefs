@@ -59,8 +59,8 @@ public class PurchaseController {
             
                 watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
                 watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
-                watchlistView.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
-                watchlistView.setShareValue(roundCompany.getGameCompany().getShareValue());
+                watchlistView.setNoOFShares(roundCompany.getNoOfShare());
+                watchlistView.setShareValue(roundCompany.getShareValue());
                 watchlistView.setId(roundCompany.getId());
 
                 watchListList.add(watchlistView);
@@ -80,8 +80,8 @@ public class PurchaseController {
             
                 watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
                 watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
-                watchlistView.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
-                watchlistView.setShareValue(roundCompany.getGameCompany().getShareValue());
+                watchlistView.setNoOFShares(roundCompany.getNoOfShare());
+                watchlistView.setShareValue(roundCompany.getShareValue());
                 watchlistView.setId(roundCompany.getId());
 
                 watchListList.add(watchlistView);
@@ -139,6 +139,8 @@ public class PurchaseController {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	Date date = new Date();
 	//System.out.println(dateFormat.format(date));
+        try{
+            
         
         if(purchaseView != null){
             
@@ -151,7 +153,7 @@ public class PurchaseController {
             playerpurchaseView.setGameCompany(company);
             playerpurchaseView.setGamePlayer(player);
             playerpurchaseView.setNoOfShare(purchaseView.getNoOFShares());
-            playerpurchaseView.setShareValue(purchaseView.getShareValue());
+            playerpurchaseView.setShareValue(company.getShareValue());
             playerpurchaseView.setIsSold(false);
              
             response = playerPurchaseRepository.save(playerpurchaseView);
@@ -160,10 +162,14 @@ public class PurchaseController {
             Transaction.setBank(bank);
             Transaction.setGamePlayer(player);
             Transaction.setGameRound(round);
-            Transaction.setAmount((float) (purchaseView.getNoOFShares() * purchaseView.getShareValue()));
+            Transaction.setAmount((float) (purchaseView.getNoOFShares() * company.getShareValue()));
             Transaction.setTime(dateFormat.format(date));
-            
+            Transaction.setTransactionNo("T" + dateFormat.format(date));
             playerTransactionRepository.save(Transaction);
+        }
+        }catch(Exception ex)
+        {
+            throw ex;
         }
         if(response == null){
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);

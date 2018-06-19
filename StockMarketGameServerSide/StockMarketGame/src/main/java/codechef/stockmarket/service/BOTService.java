@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,43 +23,68 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author thari
  */
 public class BOTService {
-    @Autowired
+    
     GameRepository gameRepository = null;
-    @Autowired
+    
     GameCompanyRepository gameCompanyRepository = null;
-    @Autowired
+    
     GamePlayerRepository gamePlayerRepository = null;
-    @Autowired
+    
     GameRoundRepository gameRoundRepository = null;
-    @Autowired
+    
     GameRoundPlayerRepository gameRoundPlayerRepository = null;
-    @Autowired
+    
     BankRepository bankRepository = null;
-    @Autowired
+    
     BrokerRepository brokerRepository = null;
-    @Autowired
+    
     PlayerRepository playerRepository = null;
-    @Autowired
+    
     CompanyRepository companyRepository = null;
-    @Autowired
+    
     RoundRepository roundRepository = null;
-    @Autowired
+    
     GameRoundCompanyRepository gameRoundCompanyRepository = null;
-    @Autowired
+    
     WatchListRepository watchListRepository = null;
     
+    PlayerPurchaseRepository playerPurchaseRepository = null;
+    
+    PlayerTransactionRepository playerTransactionRepository = null;
     
     DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+    public BOTService(GameRepository _gameRepository,GameCompanyRepository _gameCompanyRepository,GamePlayerRepository _gamePlayerRepository,PlayerRepository _playerRepository,RoundRepository _roundRepository,
+            GameRoundRepository _gameRoundRepository,GameRoundPlayerRepository _gameRoundPlayerRepository,BankRepository _bankRepository,BrokerRepository _brokerRepository,CompanyRepository _companyRepository,
+            GameRoundCompanyRepository _gameRoundCompanyRepository,WatchListRepository _watchListRepository,PlayerPurchaseRepository _playerPurchaseRepository,PlayerTransactionRepository _playerTransactionRepository)
+    {
+        gameRepository=_gameRepository;
+        gameCompanyRepository=_gameCompanyRepository;
+        gamePlayerRepository=_gamePlayerRepository;
+        gameRoundRepository=_gameRoundRepository;
+        gameRoundPlayerRepository=_gameRoundPlayerRepository;
+        bankRepository=_bankRepository;
+        brokerRepository=_brokerRepository;
+        playerRepository=_playerRepository;
+        companyRepository=_companyRepository;
+        roundRepository=_roundRepository;
+        gameRoundCompanyRepository=_gameRoundCompanyRepository;
+        watchListRepository=_watchListRepository;
+        playerPurchaseRepository=_playerPurchaseRepository;
+        playerTransactionRepository=_playerTransactionRepository;
+    }
 
     public List<Player> CreatePlayers(){
         
         List<Player> players = playerRepository.findAll();
         List<Player> aiPlayers = new ArrayList<>();
         List<Player> newPlayers = new ArrayList<>();
-        for(Player play : players){
+        if(players != null){
+            for(Player play : players){
             if(play.isAi() && !play.isIsPlaying()){
                 aiPlayers.add(play);
             }
+        }
         }
         
         if(aiPlayers.size() == 0){
@@ -68,6 +94,9 @@ public class BOTService {
                 player.setName("Player" + dateFormat.format(date));
                 player.setEmail("");
                 player.setRating(0);
+                player.setAi(true);
+                player.setIsActive(true);
+                player.setIsPlaying(true);
                 
                 newPlayers.add(player);
             }
@@ -77,7 +106,9 @@ public class BOTService {
                 player.setName("Player" + dateFormat.format(date));
                 player.setEmail("");
                 player.setRating(0);
-                
+                player.setAi(true);
+                player.setIsActive(true);
+                player.setIsPlaying(true);
                 newPlayers.add(player);
             
         }else if(aiPlayers.size() > 2){
@@ -92,7 +123,9 @@ public class BOTService {
         return players;
     }
     
-    public void AddPlayersToGame(Game game,GameRound round){
+    public void AddPlayersToGame(Game game,GameRound round,PlayerRepository playerRep,GamePlayerRepository gamePlayerRep){
+        playerRepository = playerRep;
+        gamePlayerRepository = gamePlayerRep;
         List<Player> players = this.CreatePlayers();
         
         List<Bank> banks = bankRepository.findAll();
@@ -102,20 +135,34 @@ public class BOTService {
         Broker broker = brokers.get(0);
         
         for(Player player : players){
-            GamePlayer gamePlayer = new GamePlayer();
-            gamePlayer.setBank(bank);
-            gamePlayer.setBankBalance(0);
-            gamePlayer.setBroker(broker);
-            gamePlayer.setGame(game);
-            gamePlayer.setHighScore(0);
-            gamePlayer.setPlayer(player);
-            gamePlayer.setTotalPurchase(0);
-            gamePlayer.setTotalSales(0);
-            gamePlayerRepository.save(gamePlayer);
+            if(player.isAi()){
+                GamePlayer gamePlayer = new GamePlayer();
+                gamePlayer.setBank(bank);
+                gamePlayer.setBankBalance(1000);
+                gamePlayer.setBroker(broker);
+                gamePlayer.setGame(game);
+                gamePlayer.setHighScore(0);
+                gamePlayer.setPlayer(player);
+                gamePlayer.setTotalPurchase(0);
+                gamePlayer.setTotalSales(0);
+                gamePlayerRepository.save(gamePlayer);
+            }
+            
         }  
     }
     
     public void play(Game game,GameRound round){
+        
+        List<Integer> givenList = new ArrayList();
+        Random rand = new Random();
+        int randomElement = 0;
+        
+        Random r = new Random();
+        int Low = 200;
+        int High = 600;
+        int value = 0;
+        int noOfShares = 0;
+        Set<GamePlayer> players = game.getGamePlayers();
         Set<GameCompany> roundCompany = game.getGameCompany();
         Map<Long, List<Double>> CompanyHistory;
         CompanyHistory = new HashMap<>();
@@ -123,10 +170,55 @@ public class BOTService {
         AnalizeService analyze = new AnalizeService();
         CompanyHistory = analyze.AnalyzeCompanies(game);
         
+        givenList = analyze.CalculateBest(CompanyHistory);
         
+        for(GamePlayer player : players){
+            if(player.getPlayer().isAi()){
+                Double a = (player.getBankBalance());
+                High = a.intValue();
+                
+                value = r.nextInt(High-Low) + Low;
+                while(player.getBankBalance() < value){
+                    Playerpurchase response = null;
+                    randomElement = givenList.get(rand.nextInt(givenList.size()));
+                    Date date = new Date();
+                    GameCompany company = gameCompanyRepository.findById(Long.valueOf(randomElement)).get();
+                    Bank bank = bankRepository.findById(player.getBank().getId()).get();
+                    int lowShares = 0;
+                    int highShares = company.getNoOfShares();
+                    if(company.getShareValue() <= value)
+                    {
+                      noOfShares = r.nextInt(highShares-lowShares) + lowShares;
+                        if(noOfShares != 0){
+                            Playerpurchase playerpurchaseView = new Playerpurchase();
+                            playerpurchaseView.setGameCompany(company);
+                            playerpurchaseView.setGamePlayer(player);
+                            playerpurchaseView.setNoOfShare(noOfShares);
+                            playerpurchaseView.setShareValue(company.getShareValue());
+                            playerpurchaseView.setIsSold(false);
+
+                            response = playerPurchaseRepository.save(playerpurchaseView);
+
+                            PlayerTransactions Transaction = new PlayerTransactions();
+                            Transaction.setBank(bank);
+                            Transaction.setGamePlayer(player);
+                            Transaction.setGameRound(round);
+                            Transaction.setAmount((float) (response.getNoOfShare() * response.getShareValue()));
+                            Transaction.setTime(dateFormat.format(date));
+
+                            playerTransactionRepository.save(Transaction);
+
+                            value -= (response.getNoOfShare() * response.getShareValue());
+                        }
+                    }
+                }
+            }
+        }
     }
     
-    public int SetHighestScore(Game game,GameRound round){
-        return 0;
+    public List<GamePlayer> SetScore(Game game,GameRound round,Set<GamePlayer> players){
+        List<GamePlayer> gamePlayers=new ArrayList<>(players);
+        
+        return gamePlayers;
     }
 }
