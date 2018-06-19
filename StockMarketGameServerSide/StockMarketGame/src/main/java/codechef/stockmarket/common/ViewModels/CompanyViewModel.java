@@ -14,7 +14,7 @@ public class CompanyViewModel {
     private String name;
     private double shareValue;
     private int noOFShares;
-
+    private Long gamePlayerId;
     /**
      * @return the Id
      */
@@ -69,5 +69,19 @@ public class CompanyViewModel {
      */
     public void setNoOFShares(int noOFShares) {
         this.noOFShares = noOFShares;
+    }
+
+    /**
+     * @return the gamePlayerId
+     */
+    public Long getGamePlayerId() {
+        return gamePlayerId;
+    }
+
+    /**
+     * @param gamePlayerId the gamePlayerId to set
+     */
+    public void setGamePlayerId(Long gamePlayerId) {
+        this.gamePlayerId = gamePlayerId;
     }
 }

@@ -45,6 +45,10 @@ public class PlayerController {
             player.setName(playerView.getName());
             player.setEmail(playerView.getEmail());
             player.setRating(0);
+            player.setIsActive(true);
+            player.setIsPlaying(false);
+            player.setAi(false);
+            
             response = playerRepository.save(player);
 
         }

@@ -48,7 +48,7 @@ public class WatchList {
     @ManyToOne
     @JoinColumn (name="GamePlayerId")
     @JsonBackReference
-    private GameRoundPlayer GamePlayer;
+    private GamePlayer GamePlayer;
 
     /**
      * @return the GameCompany
@@ -67,14 +67,14 @@ public class WatchList {
     /**
      * @return the GamePlayer
      */
-    public GameRoundPlayer getGamePlayer() {
+    public GamePlayer getGamePlayer() {
         return GamePlayer;
     }
 
     /**
      * @param GamePlayer the GamePlayer to set
      */
-    public void setGamePlayer(GameRoundPlayer GamePlayer) {
+    public void setGamePlayer(GamePlayer GamePlayer) {
         this.GamePlayer = GamePlayer;
     }
 }

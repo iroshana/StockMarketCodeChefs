@@ -9,12 +9,19 @@ import codechef.stockmarket.common.CommonUtil;
 import codechef.stockmarket.common.ViewModels.*;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,22 +39,28 @@ public class PurchaseController {
     PlayerPurchaseRepository playerPurchaseRepository = null;
     @Autowired
     PlayerTransactionRepository playerTransactionRepository = null;
+    @Autowired
+    GameCompanyRepository gameCompanyRepository = null;
+    @Autowired
+    BankRepository bankRepository = null;
+    @Autowired
+    GameRoundRepository gameRoundRepository = null;
     
     @RequestMapping(value = "/GetMyShares/{gamePlayerId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
     public List<CommonShareListViewModel> getMyShares(@PathVariable(value = "gamePlayerId") Long gamePlayerId) {
         List<CommonShareListViewModel> watchListList = new ArrayList<>();
         GamePlayer gamePlayerList = gamePlayerRepository.findById(gamePlayerId).get();
         
-        Set<PlayerPurchase> shareList = gamePlayerList.getPlayerPurchase();
+        Set<Playerpurchase> shareList = gamePlayerList.getPlayerPurchase();
         
-        for(PlayerPurchase roundCompany : shareList){
+        for(Playerpurchase roundCompany : shareList){
             if(roundCompany.getIsSold() == false){
                 CommonShareListViewModel watchlistView = new CommonShareListViewModel();
             
                 watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
                 watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
-                watchlistView.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
-                watchlistView.setShareValue(roundCompany.getGameCompany().getShareValue());
+                watchlistView.setNoOFShares(roundCompany.getNoOfShare());
+                watchlistView.setShareValue(roundCompany.getShareValue());
                 watchlistView.setId(roundCompany.getId());
 
                 watchListList.add(watchlistView);
@@ -60,15 +73,15 @@ public class PurchaseController {
         List<CommonShareListViewModel> watchListList = new ArrayList<>();
         GamePlayer gamePlayerList = gamePlayerRepository.findById(gamePlayerId).get();
         
-        Set<PlayerPurchase> shareList = gamePlayerList.getPlayerPurchase();
+        Set<Playerpurchase> shareList = gamePlayerList.getPlayerPurchase();
         
-        for(PlayerPurchase roundCompany : shareList){
+        for(Playerpurchase roundCompany : shareList){
                 CommonShareListViewModel watchlistView = new CommonShareListViewModel();
             
                 watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
                 watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
-                watchlistView.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
-                watchlistView.setShareValue(roundCompany.getGameCompany().getShareValue());
+                watchlistView.setNoOFShares(roundCompany.getNoOfShare());
+                watchlistView.setShareValue(roundCompany.getShareValue());
                 watchlistView.setId(roundCompany.getId());
 
                 watchListList.add(watchlistView);
@@ -116,5 +129,52 @@ public class PurchaseController {
                 }
         }
         return transactList;
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/CreatePurchase", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
+    public ResponseEntity createPurchase(@RequestBody PurchaseViewModel purchaseView){
+        Playerpurchase response = null;
+        
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	Date date = new Date();
+	//System.out.println(dateFormat.format(date));
+        try{
+            
+        
+        if(purchaseView != null){
+            
+            GamePlayer player = gamePlayerRepository.findById(purchaseView.getGamePlayerId()).get();
+            GameCompany company = gameCompanyRepository.findById(purchaseView.getGameCompanyId()).get();
+            Bank bank = bankRepository.findById(purchaseView.getBankId()).get();
+            GameRound round = gameRoundRepository.findById(purchaseView.getGameRoundId()).get();
+            
+            Playerpurchase playerpurchaseView = new Playerpurchase();
+            playerpurchaseView.setGameCompany(company);
+            playerpurchaseView.setGamePlayer(player);
+            playerpurchaseView.setNoOfShare(purchaseView.getNoOFShares());
+            playerpurchaseView.setShareValue(company.getShareValue());
+            playerpurchaseView.setIsSold(false);
+             
+            response = playerPurchaseRepository.save(playerpurchaseView);
+            
+            PlayerTransactions Transaction = new PlayerTransactions();
+            Transaction.setBank(bank);
+            Transaction.setGamePlayer(player);
+            Transaction.setGameRound(round);
+            Transaction.setAmount((float) (purchaseView.getNoOFShares() * company.getShareValue()));
+            Transaction.setTime(dateFormat.format(date));
+            Transaction.setTransactionNo("T" + dateFormat.format(date));
+            playerTransactionRepository.save(Transaction);
+        }
+        }catch(Exception ex)
+        {
+            throw ex;
+        }
+        if(response == null){
+            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity(response, HttpStatus.OK);
+        }
     }
 }

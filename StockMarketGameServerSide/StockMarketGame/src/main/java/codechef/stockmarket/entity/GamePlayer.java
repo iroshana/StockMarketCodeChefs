@@ -197,7 +197,7 @@ public class GamePlayer {
     private double TotalSales;
     
     @OneToMany(mappedBy = "GamePlayer")
-    private Set<PlayerPurchase> PlayerPurchase = new HashSet<PlayerPurchase>();
+    private Set<Playerpurchase> PlayerPurchase = new HashSet<Playerpurchase>();
 
     @OneToMany(mappedBy = "GamePlayer")
     private Set<WatchList> WatchList = new HashSet<WatchList>();
@@ -222,14 +222,14 @@ public class GamePlayer {
     /**
      * @return the PlayerPurchase
      */
-    public Set<PlayerPurchase> getPlayerPurchase() {
+    public Set<Playerpurchase> getPlayerPurchase() {
         return PlayerPurchase;
     }
 
     /**
      * @param PlayerPurchase the PlayerPurchase to set
      */
-    public void setPlayerPurchase(Set<PlayerPurchase> PlayerPurchase) {
+    public void setPlayerPurchase(Set<Playerpurchase> PlayerPurchase) {
         this.PlayerPurchase = PlayerPurchase;
     }
 

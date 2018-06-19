@@ -36,6 +36,15 @@ public class Player {
     @Column(name = "Email")
     private String Email;
     
+    @Column(name = "IsActive")
+    private boolean isActive;
+   
+    @Column(name = "IsPlaying")
+    private boolean isPlaying;
+    
+    @Column(name = "AI")
+    private boolean ai;
+    
     @OneToMany(mappedBy = "Player")
     private Set<GamePlayer> GamePlayer = new HashSet<GamePlayer>();
     
@@ -123,6 +132,48 @@ public class Player {
      */
     public void setGameRoundPlayer(Set<GameRoundPlayer> GameRoundPlayer) {
         this.GameRoundPlayer = GameRoundPlayer;
+    }
+
+    /**
+     * @return the isActive
+     */
+    public boolean isIsActive() {
+        return isActive;
+    }
+
+    /**
+     * @param isActive the isActive to set
+     */
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    /**
+     * @return the isPlaying
+     */
+    public boolean isIsPlaying() {
+        return isPlaying;
+    }
+
+    /**
+     * @param isPlaying the isPlaying to set
+     */
+    public void setIsPlaying(boolean isPlaying) {
+        this.isPlaying = isPlaying;
+    }
+
+    /**
+     * @return the ai
+     */
+    public boolean isAi() {
+        return ai;
+    }
+
+    /**
+     * @param ai the ai to set
+     */
+    public void setAi(boolean ai) {
+        this.ai = ai;
     }
 
 }
