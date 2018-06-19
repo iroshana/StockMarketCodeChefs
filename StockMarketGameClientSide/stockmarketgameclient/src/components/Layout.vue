@@ -96,7 +96,7 @@
                     <div class="dropdown-menu dropdown-menu-header wd-200">
                         <ul class="list-unstyled user-profile-nav">
                             
-                            <li>
+                            <li @click="signOut">
                                 <a href="#">
                                     <i class="icon ion-power"></i> Sign Out
                                 </a>
@@ -125,7 +125,11 @@
 <script>
 export default {
   name: "Layout",
-  methods: {}
+  methods: {
+      signOut(){
+          location.reload();
+      }
+  }
 };
 </script>
 
