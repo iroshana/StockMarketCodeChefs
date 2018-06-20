@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import Layout from "@/components/Layout";
 import AfterLogin from "@/components/AfterLogin"
 
 const LOGIN = 0,
@@ -44,7 +43,7 @@ const LOGIN = 0,
   SIGNUP = 3;
 export default {
   name: "Login",
-  components: { Layout, AfterLogin },
+  components: { AfterLogin },
   methods: {
     login: function() {
       this.currentStatus = LOGIN_SUCCESS;      
