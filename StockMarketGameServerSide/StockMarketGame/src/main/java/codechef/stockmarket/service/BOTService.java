@@ -86,7 +86,7 @@ public class BOTService {
             }
         }
         }
-        
+        players.clear();;
         if(aiPlayers.size() == 0){
             for(int i = 0; i < 2 ; i++){
                 Player player = new Player();
@@ -112,7 +112,6 @@ public class BOTService {
                 newPlayers.add(player);
             
         }else if(aiPlayers.size() > 2){
-            players = new ArrayList<>();
             players.add(aiPlayers.get(0));
             players.add(aiPlayers.get(1));
         }
@@ -152,7 +151,9 @@ public class BOTService {
     }
     
     public void play(Game game,GameRound round){
-        
+        AnalizeService analyze = new AnalizeService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
+            gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
+            gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
         List<Integer> givenList = new ArrayList();
         Random rand = new Random();
         int randomElement = 0;
@@ -162,56 +163,78 @@ public class BOTService {
         int High = 600;
         int value = 0;
         int noOfShares = 0;
+        int noOfCompanyShares = 0;
         Set<GamePlayer> players = game.getGamePlayers();
         Set<GameCompany> roundCompany = game.getGameCompany();
         Map<Long, List<Double>> CompanyHistory;
         CompanyHistory = new HashMap<>();
         
-        AnalizeService analyze = new AnalizeService();
+        
         CompanyHistory = analyze.AnalyzeCompanies(game);
         
         givenList = analyze.CalculateBest(CompanyHistory);
         
         for(GamePlayer player : players){
-            if(player.getPlayer().isAi()){
+            if(player.getPlayer().isAi())
+            {
+                List<Playerpurchase> purchaseList = new ArrayList<>();
+                List<Playerpurchase> newpurchaseList = new ArrayList<>();
                 Double a = (player.getBankBalance());
-                High = a.intValue();
-                
+                High = 500;
+                Bank bank = bankRepository.findById(player.getBank().getId()).get();
                 value = r.nextInt(High-Low) + Low;
-                while(player.getBankBalance() < value){
-                    Playerpurchase response = null;
+                double bankBalance = player.getBankBalance();
+                int lowShares = 0;
+                int highShares = 200;
+                    
+                noOfShares = r.nextInt(highShares-lowShares) + lowShares;
+                
+                while(noOfShares > 0)
+                {
+                    if(givenList.size() > 0){
                     randomElement = givenList.get(rand.nextInt(givenList.size()));
-                    Date date = new Date();
+                    givenList.remove(Integer.valueOf(randomElement));
                     GameCompany company = gameCompanyRepository.findById(Long.valueOf(randomElement)).get();
-                    Bank bank = bankRepository.findById(player.getBank().getId()).get();
-                    int lowShares = 0;
-                    int highShares = company.getNoOfShares();
-                    if(company.getShareValue() <= value)
-                    {
-                      noOfShares = r.nextInt(highShares-lowShares) + lowShares;
-                        if(noOfShares != 0){
-                            Playerpurchase playerpurchaseView = new Playerpurchase();
-                            playerpurchaseView.setGameCompany(company);
-                            playerpurchaseView.setGamePlayer(player);
-                            playerpurchaseView.setNoOfShare(noOfShares);
-                            playerpurchaseView.setShareValue(company.getShareValue());
-                            playerpurchaseView.setIsSold(false);
+                    int lShares = 0;
+                    int hShares = noOfShares;
+                    noOfCompanyShares = r.nextInt(hShares-lShares) + lShares;
+                    while(noOfCompanyShares * company.getShareValue() >= value){
+                        noOfCompanyShares = r.nextInt(hShares-lShares) + lShares;
+                    }
+                            if(noOfShares != 0 && (noOfShares * company.getShareValue()) < value)
+                            {
+                                Playerpurchase playerpurchaseView = new Playerpurchase();
+                                playerpurchaseView.setGameCompany(company);
+                                playerpurchaseView.setGamePlayer(player);
+                                playerpurchaseView.setNoOfShare(noOfShares);
+                                playerpurchaseView.setShareValue(company.getShareValue());
+                                playerpurchaseView.setIsSold(false);
 
-                            response = playerPurchaseRepository.save(playerpurchaseView);
+                                purchaseList.add(playerpurchaseView);
 
+                                value -= (company.getShareValue() * noOfShares);
+                                bankBalance -= (company.getShareValue() * noOfShares);
+                                noOfShares -= noOfCompanyShares;
+                            }
+                    }
+                }
+                
+                Playerpurchase response = null;
+                for(Playerpurchase p : purchaseList){
+                    response = playerPurchaseRepository.save(p);
+                            Date date = new Date();
                             PlayerTransactions Transaction = new PlayerTransactions();
                             Transaction.setBank(bank);
                             Transaction.setGamePlayer(player);
                             Transaction.setGameRound(round);
                             Transaction.setAmount((float) (response.getNoOfShare() * response.getShareValue()));
                             Transaction.setTime(dateFormat.format(date));
-
+                            Transaction.setTransactionNo("T" + dateFormat.format(date));
                             playerTransactionRepository.save(Transaction);
-
-                            value -= (response.getNoOfShare() * response.getShareValue());
-                        }
-                    }
                 }
+                
+                player.setBankBalance(bankBalance);
+                gamePlayerRepository.save(player);
             }
         }
     }

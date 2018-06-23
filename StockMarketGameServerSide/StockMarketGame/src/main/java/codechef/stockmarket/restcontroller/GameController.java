@@ -296,8 +296,18 @@ public class GameController {
     
     @CrossOrigin
     @RequestMapping(value = "/CompleteRound", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
-    public ResponseEntity CompleteRound(@RequestBody CompanyViewModel companyView){
+    public ResponseEntity CompleteRound(@RequestBody ResponseViewModel responseViewModel){
         WatchList response = null;
+        
+        
+        botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
+            gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
+            gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
+        
+        Game game = gameRepository.findById(responseViewModel.getGameId()).get();
+        GameRound round = gameRoundRepository.findById(responseViewModel.getGameRoundId()).get();
+        
+        botService.play(game, round);
         
         if(response == null){
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
@@ -307,12 +317,16 @@ public class GameController {
     }
     
      @RequestMapping(value = "/GetAllPlayer", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
-    public List<Long> getAllPlayer() {
-        List<Long> data = new ArrayList();
-        List<Player> players = playerRepository.findAll();
-        for(Player pl : players){
-            data.add(pl.getId());
-        }
-        return data;
+    public Long getAllPlayer() {
+//        List<Long> data = new ArrayList();
+//        List<Player> players = playerRepository.findAll();
+//        for(Player pl : players){
+//            data.add(pl.getId());
+//        }
+//Long a = Long.valueOf(1);
+Long b = Long.valueOf(131);
+//        GameCompany company= gameCompanyRepository.find(a, b);
+//        return company.getId();
+return b;
     }
 }
