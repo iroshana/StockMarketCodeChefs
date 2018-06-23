@@ -309,7 +309,7 @@ public class GameController {
         Game game = gameRepository.findById(responseViewModel.getGameId()).get();
         GameRound round = gameRoundRepository.findById(responseViewModel.getGameRoundId()).get();
         
-        botService.play(game, round);
+        botService.play(game, round); 
         
         if(response == null){
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);

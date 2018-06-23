@@ -166,7 +166,10 @@ public class PurchaseController {
             Transaction.setTime(dateFormat.format(date));
             Transaction.setTransactionNo("T" + dateFormat.format(date));
             playerTransactionRepository.save(Transaction);
-        }
+            
+            player.setBankBalance(player.getBankBalance()-Transaction.getAmount());
+            gamePlayerRepository.save(player);
+        } 
         }catch(Exception ex)
         {
             throw ex;
