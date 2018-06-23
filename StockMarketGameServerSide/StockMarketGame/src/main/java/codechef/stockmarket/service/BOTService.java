@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import static javassist.CtMethod.ConstParameter.string;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -166,8 +167,11 @@ public class BOTService {
         int randomElement = 0;
         
         Random r = new Random();
-        int Low = 0;
-        int High = 0;
+        int sellY = 1;
+        int sellN = 0;
+        int isSell = 1;
+        int low = 0;
+        int high = 0;
         int value = 0;
         int noOfShares = 0;
         int noOfCompanyShares = 0;
@@ -176,20 +180,20 @@ public class BOTService {
         Map<Long, List<Double>> CompanyHistory;
         CompanyHistory = new HashMap<>();
         
-        
         CompanyHistory = analyze.AnalyzeCompanies(game);
         
-        givenList = analyze.CalculateBest(CompanyHistory);
         
         for(GamePlayer player : players){
             if(player.getPlayer().isAi())
             {
+                givenList = analyze.CalculateTop(CompanyHistory);
+        
                 List<Playerpurchase> purchaseList = new ArrayList<>();
                 List<Playerpurchase> newpurchaseList = new ArrayList<>();
                 Double a = (player.getBankBalance());
-                High = (int)(player.getBankBalance());
+                high = (int)(player.getBankBalance());
                 Bank bank = bankRepository.findById(player.getBank().getId()).get();
-                value = r.nextInt(High-Low) + Low;
+                value = r.nextInt(high-low) + low;
                 double bankBalance = player.getBankBalance();
                 int lowShares = 0;
                 int highShares = 200;
@@ -208,21 +212,23 @@ public class BOTService {
                     while(noOfCompanyShares * company.getShareValue() >= value){
                         noOfCompanyShares = r.nextInt(hShares-lShares) + lShares;
                     }
-                            if(noOfShares != 0 && (noOfShares * company.getShareValue()) <= value)
+                            if(noOfCompanyShares != 0 && (noOfCompanyShares * company.getShareValue()) <= value)
                             {
                                 Playerpurchase playerpurchaseView = new Playerpurchase();
                                 playerpurchaseView.setGameCompany(company);
                                 playerpurchaseView.setGamePlayer(player);
-                                playerpurchaseView.setNoOfShare(noOfShares);
+                                playerpurchaseView.setNoOfShare(noOfCompanyShares);
                                 playerpurchaseView.setShareValue(company.getShareValue());
                                 playerpurchaseView.setIsSold(false);
 
                                 purchaseList.add(playerpurchaseView);
 
-                                value -= (company.getShareValue() * noOfShares);
-                                bankBalance -= (company.getShareValue() * noOfShares);
+                                value -= (company.getShareValue() * noOfCompanyShares);
+                                bankBalance -= (company.getShareValue() * noOfCompanyShares);
                                 noOfShares -= noOfCompanyShares;
                             }
+                    }else{
+                        break;
                     }
                 }
                 
@@ -244,11 +250,7 @@ public class BOTService {
                 gamePlayerRepository.save(player);
             }
         }
+        
     }
     
-    public List<GamePlayer> SetScore(Game game,GameRound round,Set<GamePlayer> players){
-        List<GamePlayer> gamePlayers=new ArrayList<>(players);
-        
-        return gamePlayers;
-    }
 }

@@ -99,9 +99,9 @@ public class AnalizeService {
         return CompanyHistory;
     }
     
-    public List<Integer> CalculateBest(Map<Long, List<Double>> CompanyHistory){
+    public List<Integer> CalculateTop(Map<Long, List<Double>> CompanyHistory){
         
-        List<Integer> bestCompanies = new ArrayList();
+        List<Integer> topCompanies = new ArrayList();
         HashMap<Long,Double> list = new HashMap<>();
         
         for (Map.Entry<Long, List<Double>> entry : CompanyHistory.entrySet()) {
@@ -116,14 +116,16 @@ public class AnalizeService {
         }
         
         Map<Long,Double> map = sortByValues(list);
+        
+        
         Set<Long> keys = map.keySet();
         List<Long> frozenOrder=new ArrayList<>(keys);
         int no = frozenOrder.size() - 3 == 0 ? frozenOrder.size() : frozenOrder.size()-3 ;
         List<Long> sub =frozenOrder.subList(0, no);
         for(int i = 0; i < sub.size(); i ++){
-            bestCompanies.add(sub.get(i).intValue());
+            topCompanies.add(sub.get(i).intValue());
         }
-        return bestCompanies;
+        return topCompanies;
     }
     
       private static HashMap sortByValues(HashMap map) { 
@@ -145,12 +147,11 @@ public class AnalizeService {
        } 
        return sortedHashMap;
   }
-      
-      public List<Integer> SellShares(Map<Long, List<Double>> CompanyHistory,Playerpurchase myShares){
-        
-        List<Integer> bestCompanies = new ArrayList();
+      public List<Integer> EligiableCompanies(Map<Long, List<Double>> CompanyHistory){
+          
+        List<Integer> eligiableCompanies = new ArrayList();
         HashMap<Long,Double> list = new HashMap<>();
-        
+        boolean isEligible = false;
         for (Map.Entry<Long, List<Double>> entry : CompanyHistory.entrySet()) {
             Long key = entry.getKey();
             List<Double> value = entry.getValue();
@@ -158,18 +159,64 @@ public class AnalizeService {
             for(double val : value){
                 shareVal += val;
             }
-            
-            list.put(key, shareVal);
+            for(int i = 0 ; i < value.size() ; i++){
+                if(i!=0){
+                    if(value.get(i-1) > value.get(i)){
+                        isEligible = true;
+                    }
+                }
+            }
+            if(isEligible){
+               list.put(key, shareVal); 
+            }
         }
         
-        Map<Long,Double> map = sortByValues(list);
-        Set<Long> keys = map.keySet();
+        Set<Long> keys = list.keySet();
+        List<Long> frozenOrder=new ArrayList<>(keys);
+        int no = frozenOrder.size() - 3 == 0 ? frozenOrder.size() : frozenOrder.size()-3 ;
+        List<Long> sub =frozenOrder.subList(0, no);
+        for(int i = 0; i < sub.size(); i ++){
+            eligiableCompanies.add(sub.get(i).intValue());
+        }
+        
+        return eligiableCompanies;
+      }
+      
+      public List<Integer> BestCompanies(Map<Long, List<Double>> CompanyHistory){
+          
+        List<Integer> bestCompanies = new ArrayList();
+        HashMap<Long,Double> list = new HashMap<>();
+        boolean isBest = false;
+        for (Map.Entry<Long, List<Double>> entry : CompanyHistory.entrySet()) {
+            Long key = entry.getKey();
+            List<Double> value = entry.getValue();
+            double shareVal = 0;
+            for(double val : value){
+                shareVal += val;
+            }
+            for(int i = 0 ; i < value.size() ; i++){
+                if(i!=0){
+                    if(value.get(i-1) > value.get(i)){
+                        isBest = true;
+                    }else{
+                        isBest = false;
+                        break;
+                    }
+                }
+            }
+            if(isBest){
+               list.put(key, shareVal); 
+            }
+        }
+        
+        Set<Long> keys = list.keySet();
         List<Long> frozenOrder=new ArrayList<>(keys);
         int no = frozenOrder.size() - 3 == 0 ? frozenOrder.size() : frozenOrder.size()-3 ;
         List<Long> sub =frozenOrder.subList(0, no);
         for(int i = 0; i < sub.size(); i ++){
             bestCompanies.add(sub.get(i).intValue());
         }
+        
         return bestCompanies;
-    }
+      }
 }

@@ -195,6 +195,7 @@ public class PurchaseController {
 	Date date = new Date();
         try{
         if(sellView != null){
+            GameRound round = gameRoundRepository.findById(sellView.getGameRoundId()).get();
             Playerpurchase item = playerPurchaseRepository.findById(sellView.getId()).get();
             item.setIsSold(true);
             
@@ -212,6 +213,7 @@ public class PurchaseController {
                 Transaction.setAmount(((float) (item.getNoOfShare()*company.getShareValue())));
                 Transaction.setTime(dateFormat.format(date));
                 Transaction.setTransactionNo("T" + dateFormat.format(date));
+                Transaction.setGameRound(round);
                 playerTransactionRepository.save(Transaction);
             
         } else{

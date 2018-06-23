@@ -10,9 +10,11 @@ import codechef.stockmarket.common.ViewModels.*;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
 import codechef.stockmarket.service.BOTService;
+import codechef.stockmarket.service.GameService;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,7 @@ public class GameController {
     @Autowired
     PlayerTransactionRepository playerTransactionRepository = null;
     BOTService botService = null;
-    
+    GameService gameService = null;
     @CrossOrigin
     @RequestMapping(value = "/Create/", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
     public ResponseEntity saveGame(@RequestBody GameStartViewModel gamePlayer){
@@ -299,22 +301,46 @@ public class GameController {
     @CrossOrigin
     @RequestMapping(value = "/CompleteRound", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
     public ResponseEntity CompleteRound(@RequestBody ResponseViewModel responseViewModel){
-        WatchList response = null;
         
+        GameCompleteResponseViewModel responseData = new GameCompleteResponseViewModel();
         
         botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
             gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
             gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
+        gameService = new GameService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
+            gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
+            gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
         
         Game game = gameRepository.findById(responseViewModel.getGameId()).get();
-        GameRound round = gameRoundRepository.findById(responseViewModel.getGameRoundId()).get();
+        GameRound gRound = gameRoundRepository.findById(responseViewModel.getGameRoundId()).get();
         
-        botService.play(game, round); 
         
-        if(response == null){
-            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        botService.play(game, gRound); 
+        gameService.AssignScore(gRound, game);
+        Player highest = gameService.GetHighestScore(gRound);
+        
+        GamePlayer player = gamePlayerRepository.findById(responseViewModel.getGamePlayerId()).get();
+        
+        responseData.setGameLeaderName(highest.getName());
+        responseData.setMyRoundScore(player.getScore());
+        responseData.setGameHighScore(gameRepository.findById(responseViewModel.getGameId()).get().getGameLeaderPoint());
+        responseData.setIsRoundWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
+        
+        highest  = gameService.GetGameHighestScore(game);
+        
+        responseData.setIsGameWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
+        
+        if(gRound.getRound().getRoundNo() != 5){
+            responseData = gameService.CompleteGame(game,gRound);
         }else{
-            return new ResponseEntity(response, HttpStatus.OK);
+            responseData = gameService.EndGame(game,gRound);
+        }
+        
+
+        if(responseData == null){
+            return new ResponseEntity(responseData, HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity(responseData, HttpStatus.OK);
         }
     }
     

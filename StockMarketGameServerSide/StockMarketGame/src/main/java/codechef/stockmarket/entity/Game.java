@@ -32,7 +32,7 @@ public class Game {
     private int CurrentRounds;
     
     @Column(name = "GameLeaderPoint")
-    private int GameLeaderPoint;
+    private double GameLeaderPoint;
     @Column(name = "GameLeaderId",nullable = true)
     private Long GameLeaderId;
     
@@ -104,14 +104,14 @@ public class Game {
     /**
      * @return the GameLeaderPoint
      */
-    public int getGameLeaderPoint() {
+    public double getGameLeaderPoint() {
         return GameLeaderPoint;
     }
 
     /**
      * @param GameLeaderPoint the GameLeaderPoint to set
      */
-    public void setGameLeaderPoint(int GameLeaderPoint) {
+    public void setGameLeaderPoint(double GameLeaderPoint) {
         this.GameLeaderPoint = GameLeaderPoint;
     }
 

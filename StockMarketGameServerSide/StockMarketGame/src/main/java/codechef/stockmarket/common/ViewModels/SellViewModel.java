@@ -12,7 +12,7 @@ package codechef.stockmarket.common.ViewModels;
 public class SellViewModel {
     private Long id;
     
-    private int gameCompanyId;
+    private Long gameRoundId;
 
     /**
      * @return the id
@@ -31,14 +31,14 @@ public class SellViewModel {
     /**
      * @return the gameCompanyId
      */
-    public int getGameCompanyId() {
-        return gameCompanyId;
+    public Long getGameRoundId() {
+        return gameRoundId;
     }
 
     /**
      * @param gameCompanyId the gameCompanyId to set
      */
-    public void setGameCompanyId(int gameCompanyId) {
-        this.gameCompanyId = gameCompanyId;
+    public void setGameRoundId(Long gameCompanyId) {
+        this.gameRoundId = gameCompanyId;
     }
 }

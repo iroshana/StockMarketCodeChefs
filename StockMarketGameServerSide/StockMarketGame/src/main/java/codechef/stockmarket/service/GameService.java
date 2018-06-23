@@ -8,7 +8,16 @@ package codechef.stockmarket.service;
 import codechef.stockmarket.common.ViewModels.*;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,20 +73,14 @@ public class GameService {
         playerTransactionRepository=_playerTransactionRepository;
     }
     BOTService botService = null;
-    public void CompleteGame(CompanyViewModel companyView){
+    public GameCompleteResponseViewModel CompleteGame(Game game ,GameRound gRound){
         botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
             gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
             gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
-        
-        if(companyView != null){
+        GameCompleteResponseViewModel responseData = new GameCompleteResponseViewModel();
+        if(game != null){
             GameRound responseGR = null;
-            
-            Game game = gameRepository.findById(companyView.getId()).get();
-            GameRound gRound = gameRoundRepository.findById(companyView.getId()).get();
             Set<GamePlayer> players = game.getGamePlayers();
-            
-            botService.play(game, gRound);
-            List<GamePlayer> gamePlayers = botService.SetScore(game, gRound, players);
             
             Set<GameRoundCompany> gRoundCompanies = gRound.getGameRoundCompany();
             
@@ -126,10 +129,102 @@ public class GameService {
                 roundPlayer.setGameRound(responseGR);
                 roundPlayer.setPlayer(player.getPlayer());
                 roundPlayer.setScore(0);
+                
+                roundPlayer = gameRoundPlayerRepository.save(roundPlayer);
+                if(!player.getPlayer().isAi()){
+                    responseData.setGamePlayerId(player.getId());
+                    responseData.setGameRoundPlayerId(roundPlayer.getId());
+                }
+                
             }
             
             game.setCurrentRounds(round.getRoundNo());
             gameRepository.save(game);
+            
+            responseData.setGameId(game.getId());
+            
+            responseData.setGameRoundId(gRound.getId());
+            responseData.setRoundId(round.getId());
+            responseData.setRoundNo(round.getRoundNo());
+
         }
+        
+        return responseData;
+    }
+    
+    public Player GetHighestScore(GameRound round){
+        
+        Set<GameRoundPlayer> player = round.getGameRoundPlayer();
+        List<GameRoundPlayer> playerList=new ArrayList<>(player);
+        GameRoundPlayer highestScored = playerList.get(0);
+        
+        for(GameRoundPlayer play : playerList){
+            if(play.getScore() > highestScored.getScore()){
+                highestScored = play;
+            }
+        }
+        
+        return highestScored.getPlayer();
+    }
+    
+    public void AssignScore(GameRound round,Game game){
+        Set<GameRoundPlayer> grPlayer = round.getGameRoundPlayer();
+        Set<PlayerTransactions> tran = round.getPlayerTransactions();
+        HashMap<Long,Double> list = new HashMap<>();
+        
+        for(GameRoundPlayer player : grPlayer){
+            Player play = player.getPlayer();
+            double score = 0;
+            for(PlayerTransactions transac : tran){
+                if(Objects.equals(transac.getGamePlayer().getPlayer().getId(), play.getId())){
+                    score += (transac.getAmount() * -1);
+                }
+            }
+            list.put(player.getPlayer().getId(), score);
+            player.setScore(score);
+            gameRoundPlayerRepository.save(player);
+        }
+        Set<GamePlayer> plays = game.getGamePlayers();
+        for(GamePlayer pl : plays){
+            pl.setScore(list.get(pl.getPlayer().getId()));
+            if(pl.getHighScore() < list.get(pl.getPlayer().getId()))
+                pl.setHighScore(list.get(pl.getPlayer().getId()));
+            
+            gamePlayerRepository.save(pl);
+        }
+    }
+    
+    public Player GetGameHighestScore(Game game){
+        
+        Set<GamePlayer> player = game.getGamePlayers();
+        List<GamePlayer> playerList=new ArrayList<>(player);
+        GamePlayer highestScored = playerList.get(0);
+        
+        for(GamePlayer play : playerList){
+            if(play.getScore() > highestScored.getScore()){
+                highestScored = play;
+            }
+        }
+        game.setGameLeaderPoint(highestScored.getScore());
+        game.setGameLeaderId(highestScored.getId());
+        gameRepository.save(game);
+        return highestScored.getPlayer();
+    }
+    
+    public GameCompleteResponseViewModel EndGame(Game game ,GameRound gRound){
+        botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
+            gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
+            gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
+        GameCompleteResponseViewModel responseData = new GameCompleteResponseViewModel();
+        if(game != null){
+            GameRound responseGR = null;
+            Set<GamePlayer> players = game.getGamePlayers();
+            
+            responseData.setGameId(game.getId());
+            responseData.setGameRoundId(gRound.getId());
+
+        }
+        
+        return responseData;
     }
 }
