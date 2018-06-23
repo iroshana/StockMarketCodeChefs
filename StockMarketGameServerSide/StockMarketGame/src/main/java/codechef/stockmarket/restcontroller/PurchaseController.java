@@ -57,7 +57,7 @@ public class PurchaseController {
             if(roundCompany.getIsSold() == false){
                 CommonShareListViewModel watchlistView = new CommonShareListViewModel();
             
-                watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
+                watchlistView.setCompanyId(roundCompany.getGameCompany().getId());
                 watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
                 watchlistView.setNoOFShares(roundCompany.getNoOfShare());
                 watchlistView.setShareValue(roundCompany.getShareValue());
@@ -78,7 +78,7 @@ public class PurchaseController {
         for(Playerpurchase roundCompany : shareList){
                 CommonShareListViewModel watchlistView = new CommonShareListViewModel();
             
-                watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
+                watchlistView.setCompanyId(roundCompany.getGameCompany().getId());
                 watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
                 watchlistView.setNoOFShares(roundCompany.getNoOfShare());
                 watchlistView.setShareValue(roundCompany.getShareValue());
@@ -135,7 +135,7 @@ public class PurchaseController {
     @RequestMapping(value = "/CreatePurchase", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
     public ResponseEntity createPurchase(@RequestBody PurchaseViewModel purchaseView){
         Playerpurchase response = null;
-        
+        String errorMessage = "";
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
 	Date date = new Date();
 	//System.out.println(dateFormat.format(date));
@@ -149,35 +149,82 @@ public class PurchaseController {
             Bank bank = bankRepository.findById(purchaseView.getBankId()).get();
             GameRound round = gameRoundRepository.findById(purchaseView.getGameRoundId()).get();
             
-            Playerpurchase playerpurchaseView = new Playerpurchase();
-            playerpurchaseView.setGameCompany(company);
-            playerpurchaseView.setGamePlayer(player);
-            playerpurchaseView.setNoOfShare(purchaseView.getNoOFShares());
-            playerpurchaseView.setShareValue(company.getShareValue());
-            playerpurchaseView.setIsSold(false);
-             
-            response = playerPurchaseRepository.save(playerpurchaseView);
-            
-            PlayerTransactions Transaction = new PlayerTransactions();
-            Transaction.setBank(bank);
-            Transaction.setGamePlayer(player);
-            Transaction.setGameRound(round);
-            Transaction.setAmount((float) (purchaseView.getNoOFShares() * company.getShareValue()));
-            Transaction.setTime(dateFormat.format(date));
-            Transaction.setTransactionNo("T" + dateFormat.format(date));
-            playerTransactionRepository.save(Transaction);
-            
-            player.setBankBalance(player.getBankBalance()-Transaction.getAmount());
-            gamePlayerRepository.save(player);
+            if(player.getBankBalance() > (purchaseView.getNoOFShares() * company.getShareValue())){
+                
+                Playerpurchase playerpurchaseView = new Playerpurchase();
+                playerpurchaseView.setGameCompany(company);
+                playerpurchaseView.setGamePlayer(player);
+                playerpurchaseView.setNoOfShare(purchaseView.getNoOFShares());
+                playerpurchaseView.setShareValue(company.getShareValue());
+                playerpurchaseView.setIsSold(false);
+
+                response = playerPurchaseRepository.save(playerpurchaseView);
+
+                PlayerTransactions Transaction = new PlayerTransactions();
+                Transaction.setBank(bank);
+                Transaction.setGamePlayer(player);
+                Transaction.setGameRound(round);
+                Transaction.setAmount(-1 *((float) (purchaseView.getNoOFShares() * company.getShareValue())));
+                Transaction.setTime(dateFormat.format(date));
+                Transaction.setTransactionNo("T" + dateFormat.format(date));
+                playerTransactionRepository.save(Transaction);
+
+                player.setBankBalance(player.getBankBalance()-Transaction.getAmount());
+                gamePlayerRepository.save(player);
+            }else{
+                errorMessage = "Not Enough Bank Balance";
+            }
         } 
         }catch(Exception ex)
         {
-            throw ex;
+            errorMessage = ex.getMessage();
         }
-        if(response == null){
-            return new ResponseEntity(response, HttpStatus.BAD_REQUEST);
+        if(!"".equals(errorMessage)){
+            return new ResponseEntity(response, HttpStatus.valueOf(errorMessage));
         }else{
-            return new ResponseEntity(response, HttpStatus.OK);
+            return new ResponseEntity("Sucess", HttpStatus.OK);
+        }
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/SellMyShares", method = RequestMethod.POST,consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
+    public ResponseEntity SellShares(@RequestBody SellViewModel sellView){
+        Playerpurchase response = null;
+        String errorMessage = "";
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+	Date date = new Date();
+        try{
+        if(sellView != null){
+            Playerpurchase item = playerPurchaseRepository.findById(sellView.getId()).get();
+            item.setIsSold(true);
+            
+            playerPurchaseRepository.save(item);
+            
+            GameCompany company = gameCompanyRepository.findById(item.getGameCompany().getId()).get();
+            
+            GamePlayer player = item.getGamePlayer();
+            player.setBankBalance(player.getBankBalance() + (item.getNoOfShare()*company.getShareValue()));
+            gamePlayerRepository.save(player);
+            
+            PlayerTransactions Transaction = new PlayerTransactions();
+                Transaction.setBank(item.getGamePlayer().getBank());
+                Transaction.setGamePlayer(player);
+                Transaction.setAmount(((float) (item.getNoOfShare()*company.getShareValue())));
+                Transaction.setTime(dateFormat.format(date));
+                Transaction.setTransactionNo("T" + dateFormat.format(date));
+                playerTransactionRepository.save(Transaction);
+            
+        } else{
+            errorMessage = "Select Record";
+        }
+        }catch(Exception ex)
+        {
+            errorMessage = ex.getMessage();
+        }
+        if(!"".equals(errorMessage)){
+            return new ResponseEntity(response, HttpStatus.valueOf(errorMessage));
+        }else{
+            return new ResponseEntity("Sucess", HttpStatus.OK);
         }
     }
 }

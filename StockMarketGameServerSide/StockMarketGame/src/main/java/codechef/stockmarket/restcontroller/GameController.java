@@ -65,7 +65,7 @@ public class GameController {
     
     @CrossOrigin
     @RequestMapping(value = "/Create/", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
-    public ResponseEntity saveTest(@RequestBody GameStartViewModel gamePlayer){
+    public ResponseEntity saveGame(@RequestBody GameStartViewModel gamePlayer){
         botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
             gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
             gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
@@ -241,7 +241,7 @@ public class GameController {
         for(WatchList roundCompany : watchList){
             CommonShareListViewModel watchlistView = new CommonShareListViewModel();
             
-            watchlistView.setCompanyId(roundCompany.getGameCompany().getCompany().getId());
+            watchlistView.setCompanyId(roundCompany.getGameCompany().getId());
             watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
             watchlistView.setNoOFShares(roundCompany.getGameCompany().getNoOfShares());
             watchlistView.setShareValue(roundCompany.getGameCompany().getShareValue());

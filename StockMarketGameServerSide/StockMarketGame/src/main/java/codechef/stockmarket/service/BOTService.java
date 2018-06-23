@@ -166,8 +166,8 @@ public class BOTService {
         int randomElement = 0;
         
         Random r = new Random();
-        int Low = 200;
-        int High = 600;
+        int Low = 0;
+        int High = 0;
         int value = 0;
         int noOfShares = 0;
         int noOfCompanyShares = 0;
@@ -187,7 +187,7 @@ public class BOTService {
                 List<Playerpurchase> purchaseList = new ArrayList<>();
                 List<Playerpurchase> newpurchaseList = new ArrayList<>();
                 Double a = (player.getBankBalance());
-                High = 500;
+                High = (int)(player.getBankBalance());
                 Bank bank = bankRepository.findById(player.getBank().getId()).get();
                 value = r.nextInt(High-Low) + Low;
                 double bankBalance = player.getBankBalance();
@@ -234,7 +234,7 @@ public class BOTService {
                             Transaction.setBank(bank);
                             Transaction.setGamePlayer(player);
                             Transaction.setGameRound(round);
-                            Transaction.setAmount((float) (response.getNoOfShare() * response.getShareValue()));
+                            Transaction.setAmount(-1*((float) (response.getNoOfShare() * response.getShareValue())));
                             Transaction.setTime(dateFormat.format(date));
                             Transaction.setTransactionNo("T" + dateFormat.format(date));
                             playerTransactionRepository.save(Transaction);
