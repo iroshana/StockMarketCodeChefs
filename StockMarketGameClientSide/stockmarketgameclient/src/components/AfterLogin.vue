@@ -98,12 +98,32 @@ export default {
         });
     },
     goGame() {
-        this.isSubmitted = true;
+      this.isSubmitted = true;
       if (this.bankId && this.brokerId) {
-          this.isSubmitted = false;
+        this.isSubmitted = false;
         this.isDashboard = DASHBOARD_SHOW;
         this.$router.push("/dashboard");
+        //this.createGame();
       }
+    },
+    createGame() {
+      axios
+        .post(apiUrl + "/Game/Create/", {
+          id: 0,
+          playerId: 1,
+          bankId: this.bankId,
+          brokerId: this.brokerId,
+          bankBalance: 1000
+        })
+        .then(
+          function(response) {
+            this.isDashboard = DASHBOARD_SHOW;
+            this.$router.push("/dashboard");
+          }.bind(this)
+        )
+        .catch(function(error) {
+          console.log(error);
+        });
     }
   },
   computed: {

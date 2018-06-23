@@ -105,8 +105,24 @@
 </template>
 
 <script>
+import axios from "axios";
+import apiUrl from "@/assets/common";
 
 export default {
   name: "Dashboard",
+  data(){
+    return{
+
+    };
+  },
+  methods:{
+
+  },
+  mounted(){
+
+  },
+  computed:{
+
+  }
 };
 </script>
