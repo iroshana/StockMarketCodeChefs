@@ -28,30 +28,53 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author thari
  */
 public class AnalizeService {
-    @Autowired
+    
     GameRepository gameRepository = null;
-    @Autowired
+    
     GameCompanyRepository gameCompanyRepository = null;
-    @Autowired
+    
     GamePlayerRepository gamePlayerRepository = null;
-    @Autowired
+    
     GameRoundRepository gameRoundRepository = null;
-    @Autowired
+    
     GameRoundPlayerRepository gameRoundPlayerRepository = null;
-    @Autowired
+    
     BankRepository bankRepository = null;
-    @Autowired
+    
     BrokerRepository brokerRepository = null;
-    @Autowired
+    
     PlayerRepository playerRepository = null;
-    @Autowired
+    
     CompanyRepository companyRepository = null;
-    @Autowired
+    
     RoundRepository roundRepository = null;
-    @Autowired
+    
     GameRoundCompanyRepository gameRoundCompanyRepository = null;
-    @Autowired
+    
     WatchListRepository watchListRepository = null;
+    PlayerPurchaseRepository playerPurchaseRepository = null;
+    
+    PlayerTransactionRepository playerTransactionRepository = null;
+    
+    public AnalizeService(GameRepository _gameRepository,GameCompanyRepository _gameCompanyRepository,GamePlayerRepository _gamePlayerRepository,PlayerRepository _playerRepository,RoundRepository _roundRepository,
+            GameRoundRepository _gameRoundRepository,GameRoundPlayerRepository _gameRoundPlayerRepository,BankRepository _bankRepository,BrokerRepository _brokerRepository,CompanyRepository _companyRepository,
+            GameRoundCompanyRepository _gameRoundCompanyRepository,WatchListRepository _watchListRepository,PlayerPurchaseRepository _playerPurchaseRepository,PlayerTransactionRepository _playerTransactionRepository)
+    {
+        gameRepository=_gameRepository;
+        gameCompanyRepository=_gameCompanyRepository;
+        gamePlayerRepository=_gamePlayerRepository;
+        gameRoundRepository=_gameRoundRepository;
+        gameRoundPlayerRepository=_gameRoundPlayerRepository;
+        bankRepository=_bankRepository;
+        brokerRepository=_brokerRepository;
+        playerRepository=_playerRepository;
+        companyRepository=_companyRepository;
+        roundRepository=_roundRepository;
+        gameRoundCompanyRepository=_gameRoundCompanyRepository;
+        watchListRepository=_watchListRepository;
+        playerPurchaseRepository=_playerPurchaseRepository;
+        playerTransactionRepository=_playerTransactionRepository;
+    }
     
     public  Map<Long, List<Double>> AnalyzeCompanies(Game game){
         List<Double> rCompanies = null;
@@ -64,11 +87,11 @@ public class AnalizeService {
             Set<GameRoundCompany> companies = r.getGameRoundCompany();
             for(GameRoundCompany roundCompany : companies){
                 if(CompanyHistory.containsKey(roundCompany.getGameCompany().getCompany().getId())){
+                     CompanyHistory.get(roundCompany.getGameCompany().getId()).add(roundCompany.getShareValue());
+                }else{
                     rCompanies = new ArrayList();
                     rCompanies.add(roundCompany.getShareValue());
-                    CompanyHistory.put(roundCompany.getGameCompany().getCompany().getId(), rCompanies);
-                }else{
-                    CompanyHistory.get(roundCompany.getGameCompany().getCompany().getId()).add(roundCompany.getShareValue());
+                    CompanyHistory.put(roundCompany.getGameCompany().getId(), rCompanies);
                 }
             }
         }
@@ -122,4 +145,31 @@ public class AnalizeService {
        } 
        return sortedHashMap;
   }
+      
+      public List<Integer> SellShares(Map<Long, List<Double>> CompanyHistory,Playerpurchase myShares){
+        
+        List<Integer> bestCompanies = new ArrayList();
+        HashMap<Long,Double> list = new HashMap<>();
+        
+        for (Map.Entry<Long, List<Double>> entry : CompanyHistory.entrySet()) {
+            Long key = entry.getKey();
+            List<Double> value = entry.getValue();
+            double shareVal = 0;
+            for(double val : value){
+                shareVal += val;
+            }
+            
+            list.put(key, shareVal);
+        }
+        
+        Map<Long,Double> map = sortByValues(list);
+        Set<Long> keys = map.keySet();
+        List<Long> frozenOrder=new ArrayList<>(keys);
+        int no = frozenOrder.size() - 3 == 0 ? frozenOrder.size() : frozenOrder.size()-3 ;
+        List<Long> sub =frozenOrder.subList(0, no);
+        for(int i = 0; i < sub.size(); i ++){
+            bestCompanies.add(sub.get(i).intValue());
+        }
+        return bestCompanies;
+    }
 }
