@@ -116,7 +116,9 @@ export default {
     };
   },
   methods:{
-
+    testMethod: function(){
+      
+    }
   },
   mounted(){
 
