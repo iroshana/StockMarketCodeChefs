@@ -30,7 +30,7 @@ public class BankController {
     @Autowired
     BankRepository BankRepository = null;
     
-    @GetMapping("/GetAllBanks/")
+    @GetMapping("/GetAllBanks")
     public List<BankViewModel> getNoteById() {
          List<BankViewModel> bankList = new ArrayList<>();
          List<Bank> banks = BankRepository.findAll();
