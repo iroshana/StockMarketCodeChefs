@@ -61,7 +61,7 @@ codechef\stockmarket\repository\RoundRepository.class
 codechef\stockmarket\service\PlayerPurchaseService.class
 codechef\stockmarket\repository\BrokerRepository.class
 codechef\stockmarket\entity\PlayerTransactions.class
-codechef\stockmarket\restcontroller\CompanyComtroller.class
+codechef\stockmarket\restcontroller\CompanyController.class
 codechef\stockmarket\service\PlayerTransactionService.class
 codechef\stockmarket\entity\Broker.class
 codechef\stockmarket\common\ViewModels\PlayerListViewModel.class

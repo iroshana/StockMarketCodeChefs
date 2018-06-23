@@ -138,6 +138,8 @@ public class GameController {
             response5 = gameRoundPlayerRepository.save(roundPlayer);
             
             gplayer.setIsPlaying(true);
+            gplayer.setIsActive(true);
+            gplayer.setIsPlaying(true);
             playerRepository.save(gplayer);
             
             botService.AddPlayersToGame(response1,response4,playerRepository,gamePlayerRepository);

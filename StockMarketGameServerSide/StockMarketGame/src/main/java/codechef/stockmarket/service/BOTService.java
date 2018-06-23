@@ -145,6 +145,13 @@ public class BOTService {
                 gamePlayer.setTotalPurchase(0);
                 gamePlayer.setTotalSales(0);
                 gamePlayerRepository.save(gamePlayer);
+                
+                GameRoundPlayer roundPlayer = new GameRoundPlayer();
+                roundPlayer.setGameRound(round);
+                roundPlayer.setPlayer(player);
+                roundPlayer.setScore(0);
+
+                gameRoundPlayerRepository.save(roundPlayer);
             }
             
         }  
@@ -201,7 +208,7 @@ public class BOTService {
                     while(noOfCompanyShares * company.getShareValue() >= value){
                         noOfCompanyShares = r.nextInt(hShares-lShares) + lShares;
                     }
-                            if(noOfShares != 0 && (noOfShares * company.getShareValue()) < value)
+                            if(noOfShares != 0 && (noOfShares * company.getShareValue()) <= value)
                             {
                                 Playerpurchase playerpurchaseView = new Playerpurchase();
                                 playerpurchaseView.setGameCompany(company);

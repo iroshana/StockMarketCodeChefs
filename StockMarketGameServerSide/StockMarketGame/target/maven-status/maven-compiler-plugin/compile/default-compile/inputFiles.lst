@@ -2,11 +2,11 @@ E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\ma
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\repository\GameCompanyRepository.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\common\CommonUtil.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\codechef\SwaggerConfig.java
-E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\restcontroller\CompanyComtroller.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\service\BrokerService.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\entity\Broker.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\common\ViewModels\GameViewModel.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\common\ViewModels\ResponseViewModel.java
+E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\restcontroller\CompanyController.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\service\CompanyService.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\repository\GamePlayerRepository.java
 E:\Project\StockMarketCodeChefs\StockMarketGameServerSide\StockMarketGame\src\main\java\codechef\stockmarket\restcontroller\BankController.java
