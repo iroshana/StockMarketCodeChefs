@@ -321,6 +321,12 @@ public class GameController {
         
         GamePlayer player = gamePlayerRepository.findById(responseViewModel.getGamePlayerId()).get();
         
+        if(gRound.getRound().getRoundNo() != 5){
+            responseData = gameService.CompleteGame(game,gRound);
+        }else{
+            responseData = gameService.EndGame(game,gRound);
+        }
+        
         responseData.setGameLeaderName(highest.getName());
         responseData.setMyRoundScore(player.getScore());
         responseData.setGameHighScore(gameRepository.findById(responseViewModel.getGameId()).get().getGameLeaderPoint());
@@ -329,12 +335,6 @@ public class GameController {
         highest  = gameService.GetGameHighestScore(game);
         
         responseData.setIsGameWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
-        
-        if(gRound.getRound().getRoundNo() != 5){
-            responseData = gameService.CompleteGame(game,gRound);
-        }else{
-            responseData = gameService.EndGame(game,gRound);
-        }
         
 
         if(responseData == null){

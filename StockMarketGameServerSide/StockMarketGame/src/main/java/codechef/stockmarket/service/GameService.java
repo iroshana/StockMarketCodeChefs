@@ -73,11 +73,16 @@ public class GameService {
         playerTransactionRepository=_playerTransactionRepository;
     }
     BOTService botService = null;
+    AnalizeService analizeService = null;
     public GameCompleteResponseViewModel CompleteGame(Game game ,GameRound gRound){
         botService = new BOTService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
             gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
             gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
+        analizeService = new AnalizeService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
+            gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
+            gameRoundCompanyRepository,watchListRepository,playerPurchaseRepository,playerTransactionRepository);
         GameCompleteResponseViewModel responseData = new GameCompleteResponseViewModel();
+        boolean increase = true;
         if(game != null){
             GameRound responseGR = null;
             Set<GamePlayer> players = game.getGamePlayers();
@@ -86,18 +91,22 @@ public class GameService {
             
             Round round = new Round();
             int rundId = 1;
-            switch(rundId){
+            switch(gRound.getRound().getRoundNo()){
                 case 1:
                     round = roundRepository.findByRoundNo(2);
+                    increase = true;
                     break;
                 case 2:
                     round = roundRepository.findByRoundNo(3);
+                    increase = true;
                     break;
                 case 3:
                     round = roundRepository.findByRoundNo(4);
+                    increase = false;
                     break;
                 case 4:
                     round = roundRepository.findByRoundNo(5);
+                    increase = false;
                     break;
             }
             
@@ -110,16 +119,18 @@ public class GameService {
             responseGR = gameRoundRepository.save(ground);
             
             for(GameRoundCompany grCompany : gRoundCompanies){
+                
+                double val = analizeService.ChangeCompany(increase, grCompany.getGameCompany().getShareValue());
                 GameCompany company = grCompany.getGameCompany();
                 
                 GameRoundCompany roundCompany = new GameRoundCompany();
                 roundCompany.setGameCompany(company);
                 roundCompany.setGameRound(responseGR);
-                roundCompany.setShareValue(company.getShareValue() + company.getShareValue() * (10/100));
+                roundCompany.setShareValue(val);
                 
                 gameRoundCompanyRepository.save(roundCompany);
                 
-                company.setShareValue(company.getShareValue() + company.getShareValue() * (10/100));
+                company.setShareValue(val);
                 gameCompanyRepository.save(company);
                 
             }
@@ -143,8 +154,8 @@ public class GameService {
             
             responseData.setGameId(game.getId());
             
-            responseData.setGameRoundId(gRound.getId());
-            responseData.setRoundId(round.getId());
+            responseData.setGameRoundId(responseGR.getId());
+            responseData.setRoundId(ground.getRound().getId());
             responseData.setRoundNo(round.getRoundNo());
 
         }
@@ -173,11 +184,12 @@ public class GameService {
         HashMap<Long,Double> list = new HashMap<>();
         
         for(GameRoundPlayer player : grPlayer){
+           
             Player play = player.getPlayer();
             double score = 0;
             for(PlayerTransactions transac : tran){
                 if(Objects.equals(transac.getGamePlayer().getPlayer().getId(), play.getId())){
-                    score += (transac.getAmount() * -1);
+                    score += (transac.getAmount());
                 }
             }
             list.put(player.getPlayer().getId(), score);
@@ -222,6 +234,13 @@ public class GameService {
             
             responseData.setGameId(game.getId());
             responseData.setGameRoundId(gRound.getId());
+            
+            for(GamePlayer gPlayer : game.getGamePlayers()){
+                Player player = gPlayer.getPlayer();
+                player.setIsPlaying(false);
+                player.setIsActive(false);
+                player.setRating(player.getRating() + 1);
+            }
 
         }
         

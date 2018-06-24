@@ -8,6 +8,7 @@ package codechef.stockmarket.service;
 import codechef.stockmarket.common.ViewModels.CompanyViewModel;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -218,5 +220,30 @@ public class AnalizeService {
         }
         
         return bestCompanies;
+      }
+      
+      public double ChangeCompany(boolean increase,double shValue){
+          int yes = 1;
+          double shareVal = 0;
+          int high = 5;
+          int low = 1;
+          int val = 0;
+          Random random = new Random();
+        DecimalFormat df = new DecimalFormat("#.00"); 
+          boolean value = random.nextBoolean();
+          if(increase){
+              val = random.nextInt(high-low) + low;
+              shareVal =  shValue + (shValue * val/100);
+          }else{
+              if(value){
+                 val = random.nextInt(high-low) + low;
+                shareVal = shValue + (shValue * val/100);
+              }else{
+                  val = random.nextInt(high-low) + low;
+                    shareVal = shValue - (shValue * val/100);
+              }
+          }
+          shareVal = Double.parseDouble(df.format(shareVal));
+          return shareVal;
       }
 }

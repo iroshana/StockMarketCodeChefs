@@ -60,7 +60,7 @@ public class PurchaseController {
                 watchlistView.setCompanyId(roundCompany.getGameCompany().getId());
                 watchlistView.setName(roundCompany.getGameCompany().getCompany().getName());
                 watchlistView.setNoOFShares(roundCompany.getNoOfShare());
-                watchlistView.setShareValue(roundCompany.getShareValue());
+                watchlistView.setShareValue(roundCompany.getGameCompany().getShareValue());
                 watchlistView.setId(roundCompany.getId());
 
                 watchListList.add(watchlistView);
@@ -169,7 +169,7 @@ public class PurchaseController {
                 Transaction.setTransactionNo("T" + dateFormat.format(date));
                 playerTransactionRepository.save(Transaction);
 
-                player.setBankBalance(player.getBankBalance()-Transaction.getAmount());
+                player.setBankBalance(player.getBankBalance()+( -1 *((float) (purchaseView.getNoOFShares() * company.getShareValue()))));
                 gamePlayerRepository.save(player);
             }else{
                 errorMessage = "Not Enough Bank Balance";
