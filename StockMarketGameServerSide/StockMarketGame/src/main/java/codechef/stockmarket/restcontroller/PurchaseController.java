@@ -182,7 +182,7 @@ public class PurchaseController {
         if(!"".equals(errorMessage)){
             return new ResponseEntity(response, HttpStatus.valueOf(errorMessage));
         }else{
-            return new ResponseEntity("Sucess", HttpStatus.OK);
+            return new ResponseEntity(response, HttpStatus.OK);
         }
     }
     
@@ -226,7 +226,7 @@ public class PurchaseController {
         if(!"".equals(errorMessage)){
             return new ResponseEntity(response, HttpStatus.valueOf(errorMessage));
         }else{
-            return new ResponseEntity("Sucess", HttpStatus.OK);
+            return new ResponseEntity(response, HttpStatus.OK);
         }
     }
 }

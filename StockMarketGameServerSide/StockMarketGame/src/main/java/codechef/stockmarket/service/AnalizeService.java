@@ -88,8 +88,8 @@ public class AnalizeService {
         for(GameRound r : gamer){
             Set<GameRoundCompany> companies = r.getGameRoundCompany();
             for(GameRoundCompany roundCompany : companies){
-                if(CompanyHistory.containsKey(roundCompany.getGameCompany().getCompany().getId())){
-                     CompanyHistory.get(roundCompany.getGameCompany().getId()).add(roundCompany.getShareValue());
+                if(CompanyHistory.containsKey(roundCompany.getGameCompany().getId())){
+                    CompanyHistory.get(roundCompany.getGameCompany().getId()).add(roundCompany.getShareValue());
                 }else{
                     rCompanies = new ArrayList();
                     rCompanies.add(roundCompany.getShareValue());
