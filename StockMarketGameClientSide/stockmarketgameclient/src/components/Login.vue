@@ -31,6 +31,93 @@
     </div>
     <!-- <Layout v-if="isLoginSuccess"></Layout> -->
     <AfterLogin v-if="isLoginSuccess"></AfterLogin>
+
+
+    <!-- Modal Component -->
+    <b-modal id="signUp"
+    v-model="showSignUp"
+             ref="signupref"
+             title="Player Sign Up"
+             :hide-footer="true">
+             <div class="row no-gutters">
+               <b-form @submit="onSubmitPlayer" @reset="onResetPlayer">
+
+                 <div class="row">
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup1"
+                    label="Name:"
+                    label-for="exampleInput1"
+                    >
+        <b-form-input id="exampleInput1"
+                      type="text"
+                      v-model="signupVM.name"
+                      >
+        </b-form-input>
+      </b-form-group>
+                 </div>
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup2"
+                    label="Email:"
+                    label-for="exampleInput2">
+        <b-form-input id="exampleInput2"
+                      type="text"
+                      v-model="signupVM.email"
+                      >
+        </b-form-input>
+      </b-form-group>
+                 </div></div>
+
+<div class="row">
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup10"
+                    label="User Name:"
+                    label-for="exampleInput10"
+                    >
+        <b-form-input id="exampleInput10"
+                      type="text"
+                      v-model="signupVM.userName"
+                      >
+        </b-form-input>
+      </b-form-group>
+                 </div>
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup11"
+                    label="Password:"
+                    label-for="exampleInput11">
+        <b-form-input id="exampleInput11"
+                      type="password"
+                      v-model="signupVM.Password"
+                      >
+        </b-form-input>
+      </b-form-group>
+                 </div></div>
+
+
+<div class="row">
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup3"
+                    label="Default Rating:"
+                    label-for="exampleInput3">
+        <b-form-input id="exampleInput3"
+                      type="text"
+                      v-model="signupVM.rating"
+                      :readonly="true">
+        </b-form-input>
+      </b-form-group>
+
+                 </div>
+                 <div class="col-md-6">
+                   
+                 </div></div>
+            
+      <b-button type="submit" variant="primary">Save</b-button>
+      <b-button type="reset" variant="danger">Close</b-button>
+    </b-form>
+               
+             </div>
+      
+    </b-modal>
+
 </div>
 </template>
 
@@ -43,14 +130,41 @@ const LOGIN = 0,
   SIGNUP = 3;
 export default {
   name: "Login",
-  components: { AfterLogin },
+  components: { AfterLogin },  
   methods: {
     login: function() {
       this.currentStatus = LOGIN_SUCCESS;      
     },
-    changecomponent: function() {},
+    changecomponent: function() {
+      //this.$refs.signupref.show();
+      this.showSignUp = true;
+    },
     reset: function() {
       this.currentStatus = LOGIN;
+    },
+    onSubmitPlayer(evt){
+      evt.preventDefault();
+
+      if(this.signupVM.name && this.signupVM.email){
+        axios
+        .post(apiUrl + "/Player/Create",{
+
+        })
+        .then(
+          function(response) {
+            this.$refs.myModalRef.hide();
+            this.getShareList();
+            this.getCompanySharePrices();
+          }.bind(this)
+        )
+        .catch(function(error) {
+          console.log(error);
+        });
+      }
+
+    },
+    onResetPlayer(){
+      this.showSignUp = false;
     }
   },
   computed: {
@@ -70,6 +184,15 @@ export default {
       userModel: {
         userName: "",
         password: ""
+      },
+      showSignUp: false,
+      signupVM:{
+        id:'',
+        name:'',
+        email:'',
+        rating:'1',
+        userName:'',
+        password:''
       }
     };
   }

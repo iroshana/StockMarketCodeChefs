@@ -1,24 +1,18 @@
 # Stock Market Game
-#CodeChefs
+# CodeChefs
  
  >Members
  <ul>
  <li>16211138       R I Athapattu</li>
  <li>16211200       T D Perera</li>
  <li>16211217       L K Weerasinghe</li>
- <li></li>
- <li></li>
+ <li>16211238       V O Fernando</li>
+ <li>16211133       S J Athukorala</li>
  </ul>
 
-##Client Side Configuration
+## Server Side Configuration
 
-<ul>
-<li>Node js version 8.11.1</li>
-<li>Vue js version 2.5.2</li>
-</ul>
-
-##Server Side Configuration
-
+Need to Install
 <ul>
 <li>JDK 1.8 or higher</li>
 <li>Wampserver</li>
@@ -26,7 +20,25 @@
 <li>Apache Maven 3.5.3 or higher</li>
 </ul>
 
-Maven Configuration Follow this link - 
+Maven Configuration Follow this link - https://www.mkyong.com/maven/how-to-install-maven-in-windows/
+Download Maven Link - http://maven.apache.org/download.cgi
+
+
+## Client Side Configuration
+
+Need to Install
+<ul>
+<li>Node js version 8.11.1</li>
+<li>Vue js version 2.5.2</li>
+</ul>
+
+please user Node.js Command Prompt
+clone git project and go to the StockMarketFinalProject/stockmarketgameclient/
+
+1. npm install
+2. npm run dev
+
+open the browser and go to the link = http://localhost:8070
 
 > A Vue.js project
 

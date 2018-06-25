@@ -145,7 +145,8 @@
                 </table>
               </div>
               </div>
-            </div>
+            </div>            
+
           </div>
           <div class="col-sm-6 col-lg-3 mg-t-20 mg-lg-t-0">
             <h6 class="card-title tx-uppercase tx-12 mg-b-0">Share Prices</h6>
@@ -254,6 +255,7 @@
     <!-- Next Round Modal -->
     <b-modal id="modalPrevent"
              ref="complete"
+             v-model="isRoundComplete"
              title="Round Complete"
              :hide-footer="true"
              :no-close-on-backdrop="true"
@@ -262,6 +264,10 @@
 
              <div class="row no-gutters">
                <b-button type="button" @click="nextRound()" class="btn btn-info btn-lg" variant="primary">Next Round</b-button>
+               <div class="col-md-12">
+                 <span v-if="gamePlayerDetails.isRoundWinner">You are Won this Round</span>
+                 <span v-if="gamePlayerDetails.isGameWinner">You are Won the Game</span>
+               </div>
              </div>
 
     </b-modal>
@@ -272,7 +278,7 @@
              title="Sell Shares"
              :hide-footer="true">
              <div class="row no-gutters">
-               <b-form @submit="onSubmitSell" @reset="onReset" v-if="show">
+               <b-form @submit="onSubmitSell" @reset="onReset">
 
                  <div class="row">
                  <div class="col-md-6">
@@ -312,7 +318,7 @@
 
                  </div>
                  <div class="col-md-6">
-                   <b-form-group id="exampleInputGroup4"
+                   <!-- <b-form-group id="exampleInputGroup4"
                     label="Sell Value:"
                     label-for="exampleInput4">
         <b-form-input id="exampleInput4"
@@ -324,7 +330,7 @@
         <b-form-invalid-feedback id="inputLiveFeedback">
           Invalid Share
     </b-form-invalid-feedback>
-      </b-form-group>
+      </b-form-group> -->
 
                  </div></div>
             
@@ -345,11 +351,11 @@
              :no-close-on-esc="true"
              >
 
-             <Chart></Chart>
+             
 
              <div class="row no-gutters">
                <div class="col-xl-12">
-                 
+                 <Chart :idData="chartData" v-if="isdisplay"></Chart>
               <!-- <div class="bd pd-t-30 pd-b-20 pd-x-20"><canvas id="chartLine1" height="200"></canvas></div> -->
             </div>
              </div>
@@ -374,6 +380,7 @@ export default {
   components:{Chart},
   data() {
     return { 
+      isRoundComplete: false,
       show: true,
       isdisplay: false,
       modalVM: {
@@ -392,11 +399,14 @@ export default {
         totalSales: 0,
         playerName: "",
         round: 0,
-        playerId: 0
+        playerId: 0,
+        isGameWinner: false,
+        isRoundWinner: false
       },
       watchList: [],
       shareList: [],
-      sharePriceList: []
+      sharePriceList: [],
+      chartData: [10,20,30,40,50]
     };
   },
   computed: {},
@@ -562,8 +572,7 @@ export default {
           timer = duration;
         }
         
-        if(display.textContent == '00:00'){   
-          this.$refs.complete.show();       
+        if(display.textContent == '00:00'){ 
           clearInterval(timeobj);
           this.completeRound();
         }        
@@ -584,10 +593,27 @@ export default {
       completeobj.roundNo = localStorage.getItem("roundNo");
 
       axios
-        .post(apiUrl + "/Game/CompleteRound", completeobj)
+        .post(apiUrl + "/Game/CompleteRound", {
+          gameId: completeobj.gameId,
+          gamePlayerId: completeobj.gamePlayerId,
+          gameRoundId: completeobj.gameRoundId,
+          gameRoundPlayerId: completeobj.gameRoundPlayerId,
+          roundId: completeobj.roundId,
+          roundNo: completeobj.roundNo
+        })
         .then(
           function(response) {
-            console.log(response);            
+            //this.$refs.complete.show();
+            this.isRoundComplete = true; 
+            console.log(response);
+            localStorage.setItem("roundNo", response.data.roundNo);
+            localStorage.setItem("gameRoundId", response.data.gameRoundId); 
+            
+            this.gamePlayerDetails.round = response.data.roundNo;
+            this.gamePlayerDetails.gameHighScore = response.data.gameHighScore;
+            this.gamePlayerDetails.score = response.data.myRoundScore;
+            this.gamePlayerDetails.isGameWinner = response.data.isGameWinner;
+            this.gamePlayerDetails.isRoundWinner = response.data.isRoundWinner;
           }.bind(this)
         )
         .catch(function(error) {
@@ -595,7 +621,8 @@ export default {
         });
     },
     nextRound(){
-      this.$refs.complete.hide();
+      //this.$refs.complete.hide();
+      this.isRoundComplete = false;
       this.timerStart();
     },
     showModalPurchase(watch){      
@@ -610,7 +637,7 @@ export default {
     },
     sellShares(share){
       this.modalVM = {
-        id: share.companyId,
+        id: share.id,
         companyName: share.name,
         noOfShares: share.noOFShares,
         shareValue: share.shareValue,
@@ -621,13 +648,36 @@ export default {
     onSubmitSell(evt){
       evt.preventDefault();
 
-      if(this.modalVM.purchaseQty && this.modalVM.purchaseQty <= this.modalVM.noOfShares){
+      axios
+        .post(apiUrl + "/Purchase/SellMyShares",{
+          gameRoundId: localStorage.getItem("gameRoundId"),
+          id: this.modalVM.id
+        })
+        .then(
+          function(response) {
 
-      }
+          }.bind(this)
+        )
+        .catch(function(error) {
+          console.log(error);
+        });
+
     },
     showChartModal(lst){
-      //var ctx = document.getElementById('chartLine1').getContext('2d');
+      axios
+        .get(apiUrl + "/Company/GetChartData/" + localStorage.getItem("gameId") + "/" + lst.id)
+        .then(
+          function(response) {
+            this.chartData = response.data;
+
+          }.bind(this)
+        )
+        .catch(function(error) {
+          console.log(error);
+        });
+
       this.isdisplay = true;
+      this.chartData = [20, 6,18,9,3];
       this.$refs.chartModalRef.show();
     }
   },

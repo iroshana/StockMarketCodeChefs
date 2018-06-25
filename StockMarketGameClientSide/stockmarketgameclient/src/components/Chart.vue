@@ -4,16 +4,16 @@ import { Line } from 'vue-chartjs'
  
 export default {
   extends: Line,
-  //props: ['idData'],
+  props: ['idData'],
   mounted () {
     //this.renderChart(this.data, this.options)
     this.renderChart({
       labels:['1', '2', '3', '4', '5'],
       datasets: [
         {
-          label: 'GitHub Commits',
-          backgroundColor: '#f87979',
-          data: [40, 20, 12, 39, 10]
+          label: 'Round Score',
+          backgroundColor: '#00b297',
+          data: this.idData
         }
       ]
     });
