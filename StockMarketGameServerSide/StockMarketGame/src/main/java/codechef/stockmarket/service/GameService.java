@@ -192,8 +192,8 @@ public class GameService {
                     score += (transac.getAmount());
                 }
             }
-            list.put(player.getPlayer().getId(), score);
-            player.setScore(score);
+            list.put(player.getPlayer().getId(), score < 0 ? 0 : score);
+            player.setScore(score < 0 ? 0 : score);
             gameRoundPlayerRepository.save(player);
         }
         Set<GamePlayer> plays = game.getGamePlayers();

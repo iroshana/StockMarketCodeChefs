@@ -8,6 +8,7 @@ package codechef.stockmarket.service;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -112,7 +113,7 @@ public class BOTService {
                 player.setIsPlaying(true);
                 newPlayers.add(player);
             
-        }else if(aiPlayers.size() > 2){
+        }else if(aiPlayers.size() >= 2){
             players.add(aiPlayers.get(0));
             players.add(aiPlayers.get(1));
         }
@@ -179,10 +180,10 @@ public class BOTService {
         Set<GameCompany> roundCompany = game.getGameCompany();
         Map<Long, List<Double>> CompanyHistory;
         CompanyHistory = new HashMap<>();
-        
+        GamePlayer playerResponse = null;
         CompanyHistory = analyze.AnalyzeCompanies(game);
-        
-        
+        List<Playerpurchase> responseList = new ArrayList<>();
+        DecimalFormat df = new DecimalFormat("#.00"); 
         for(GamePlayer player : players){
             if(player.getPlayer().isAi())
             {
@@ -245,9 +246,44 @@ public class BOTService {
                             Transaction.setTransactionNo("T" + dateFormat.format(date));
                             playerTransactionRepository.save(Transaction);
                 }
-                
+                bankBalance = Double.parseDouble(df.format(bankBalance));
                 player.setBankBalance(bankBalance);
-                gamePlayerRepository.save(player);
+                playerResponse = gamePlayerRepository.save(player);
+                
+                if(round.getRound().getRoundNo() != 1){
+                    givenList.clear();
+                    givenList = analyze.BestCompanies(CompanyHistory);
+                    if(givenList.isEmpty()){
+                        givenList = analyze.EligiableCompanies(CompanyHistory);
+                    }
+                    
+                    for(Playerpurchase p : responseList){
+                        if(givenList.contains(p.getGameCompany().getId())){
+                            boolean yn = r.nextBoolean();
+                            if(yn){
+                                p.setIsSold(true);
+                                GameCompany company = gameCompanyRepository.findById(p.getGameCompany().getId()).get();
+                                Date date = new Date();
+                                
+                                PlayerTransactions Transaction = new PlayerTransactions();
+                                Transaction.setBank(bank);
+                                Transaction.setGamePlayer(player);
+                                Transaction.setGameRound(round);
+                                Transaction.setAmount(((float) (p.getNoOfShare() * company.getShareValue())));
+                                Transaction.setTime(dateFormat.format(date));
+                                Transaction.setTransactionNo("T" + dateFormat.format(date));
+                                playerTransactionRepository.save(Transaction);
+                                
+                                player.setBankBalance(Double.parseDouble(df.format(playerResponse.getBankBalance() + (p.getNoOfShare() * company.getShareValue()))));
+                                gamePlayerRepository.save(player);
+                            }
+                        }
+                    }
+                
+                }
+                
+                
+                
             }
         }
         
