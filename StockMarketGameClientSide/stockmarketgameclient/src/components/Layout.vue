@@ -23,45 +23,80 @@
             <a href="#" class="br-menu-link">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-ios-briefcase tx-22"></i>
-                    <span class="menu-item-label">My Shares</span>
+                    <span class="menu-item-label">
+                        <router-link to="/share">
+                            <a>My Shares</a>
+                        </router-link>                        
+                    </span>
                 </div>
             </a>
             <a href="#" class="br-menu-link">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-cash tx-22"></i>
-                    <span class="menu-item-label">Share Price</span>
+                    <span class="menu-item-label">
+                        <router-link to="/shareprice">
+                            <a>Share Price</a>
+                        </router-link> 
+                        
+                    </span>
                 </div>
             </a>
             <a href="#" class="br-menu-link">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-ios-eye tx-22"></i>
-                    <span class="menu-item-label">Watch List</span>
+                    <span class="menu-item-label">
+                        <router-link to="/watch">
+                            <a>Watch List</a>
+                        </router-link>
+                        
+                        
+                    </span>
                 </div>
             </a>
             <a href="#" class="br-menu-link">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-ios-cart-outline tx-22"></i>
-                    <span class="menu-item-label">Purchase History</span>
+                    <span class="menu-item-label">
+                        <router-link to="/purchasehistory">
+                            <a>Purchase History</a>
+                        </router-link> 
+                        
+                    </span>
                 </div>
             </a>
             <a href="#" class="br-menu-link">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-clipboard tx-22"></i>
-                    <span class="menu-item-label">Transaction History</span>
+                    <span class="menu-item-label">
+                        <router-link to="/transactionhistory">
+                            <a>Transaction History</a>
+                        </router-link>
+                        
+                    </span>
                 </div>
             </a>
 
-            <a href="#" class="br-menu-link">
+            <!-- <a href="#" class="br-menu-link">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-ios-undo tx-22"></i>
-                    <span class="menu-item-label">Previous Round</span>
+                    <span class="menu-item-label">
+                        <router-link to="/previousround">
+                            <a>Previous Round</a>
+                        </router-link>
+                        
+                    </span>
                 </div>
-            </a>
+            </a> -->
 
             <a href="#" class="br-menu-link">
                 <div class="br-menu-item">
                     <i class="menu-item-icon icon ion-ios-people tx-22"></i>
-                    <span class="menu-item-label">Other Player</span>
+                    <span class="menu-item-label">
+                        <router-link to="/allplayers">
+                            <a>Other Player</a>
+                        </router-link>
+                        
+                    </span>
                 </div>
             </a>
             <!--Start Menu-->
@@ -75,12 +110,12 @@
     <div class="br-header">
         <div class="br-header-left">
             <div class="navicon-left hidden-md-down">
-                <a id="btnLeftMenu" href="">
+                <a id="btnLeftMenu" href="#">
                     <i class="icon ion-navicon-round"></i>
                 </a>
             </div>
             <div class="navicon-left hidden-lg-up">
-                <a id="btnLeftMenuMobile" href="">
+                <a id="btnLeftMenuMobile" href="#">
                     <i class="icon ion-navicon-round"></i>
                 </a>
             </div>           

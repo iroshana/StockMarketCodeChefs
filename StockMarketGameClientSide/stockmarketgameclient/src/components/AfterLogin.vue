@@ -6,7 +6,8 @@
             <div class="login-wrapper wd-300 wd-xs-350 pd-25 pd-xs-40 bg-white rounded shadow-base" id="tset">
                 <div v-if="!isStartGame">
                     <button type="button" class="btn btn-info btn-block btn-lg" @click="startGame"><i class="fa fa-hourglass-start"></i> Start Game</button>
-                    <button type="button" class="btn btn-info btn-block btn-lg"><i class="fa fa-eye"></i> View Profile</button>
+                    <button type="button" class="btn btn-info btn-block btn-lg" @click="showDetailsMember()"><i class="fa fa-eye"></i> View Profile</button>
+                    <button type="button" class="btn btn-info btn-block btn-lg" @click="tempLogin"><i class="fa fa-eye"></i> Temp</button>
                 </div>
                 <div v-else>
                     <select class="form-control" v-model="bankId">
@@ -22,16 +23,71 @@
                 <small v-show="isSubmitted && !brokerId != 0" class="tx-danger">Broker Required</small>
                 <br />
                 <button type="button" class="btn btn-info btn-block btn-lg" @click="goGame"><i class="fa fa-arrow-right"></i> Start</button>
-                </div>
-                
-                
-                
+                </div>                
             </div>
         </div>
 
     </div>
     </div>
     <Layout v-if="isDashboardShow"></Layout>
+
+  <!-- Player Details Modal -->
+  <b-modal id="modalPlayerDetail"
+             ref="myModalMember"
+             title="Member Details"
+             :hide-footer="true">
+             <div class="row no-gutters">
+               <b-form @reset="onReset">
+
+                 <div class="row">
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup1"
+                    label="Name:"
+                    label-for="exampleInput1"
+                    >
+        <b-form-input id="exampleInput1"
+                      type="text"
+                      v-model="memberVM.name"
+                      :readonly="true">
+        </b-form-input>
+      </b-form-group>
+                 </div>
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup2"
+                    label="Ratings:"
+                    label-for="exampleInput2">
+        <b-form-input id="exampleInput2"
+                      type="text"
+                      v-model="memberVM.rating"
+                      :readonly="true">
+        </b-form-input>
+      </b-form-group>
+                 </div></div>
+<div class="row">
+                 <div class="col-md-6">
+                   <b-form-group id="exampleInputGroup3"
+                    label="Email:"
+                    label-for="exampleInput3">
+        <b-form-input id="exampleInput3"
+                      type="text"
+                      v-model="memberVM.email"
+                      :readonly="true">
+        </b-form-input>
+      </b-form-group>
+
+                 </div>
+                 <div class="col-md-6">
+                   
+
+                 </div></div>
+            
+      <b-button type="reset" variant="danger">Close</b-button>
+    </b-form>
+               
+             </div>
+      
+    </b-modal>
+
     </div>
 </template>
 
@@ -62,7 +118,13 @@ export default {
         bankBalance: ""
       },
       isDashboard: null,
-      isSubmitted: false
+      isSubmitted: false,
+      memberVM:{
+        id:'',
+        email:'',
+        name:'',
+        rating:''
+      }
     };
   },
   methods: {
@@ -101,9 +163,7 @@ export default {
       this.isSubmitted = true;
       if (this.bankId && this.brokerId) {
         this.isSubmitted = false;
-        this.isDashboard = DASHBOARD_SHOW;
-        this.$router.push("/dashboard");
-        //this.createGame();
+        this.createGame();
       }
     },
     createGame() {
@@ -117,6 +177,13 @@ export default {
         })
         .then(
           function(response) {
+            localStorage.setItem("gameId", response.data.gameId);
+            localStorage.setItem("gamePlayerId", response.data.gamePlayerId);
+            localStorage.setItem("gameRoundId", response.data.gameRoundId);
+            localStorage.setItem("gameRoundPlayerId", response.data.gameRoundPlayerId);
+            localStorage.setItem("roundId", response.data.roundId);
+            localStorage.setItem("roundNo", response.data.roundNo);
+            localStorage.setItem("bankId", this.bankId);
             this.isDashboard = DASHBOARD_SHOW;
             this.$router.push("/dashboard");
           }.bind(this)
@@ -124,6 +191,32 @@ export default {
         .catch(function(error) {
           console.log(error);
         });
+    },
+    tempLogin() {
+      localStorage.setItem("bankId", 1);
+      this.isDashboard = DASHBOARD_SHOW;
+      this.$router.push("/dashboard");
+    },
+    onReset(){
+      this.$refs.myModalMember.hide();
+    },
+    showDetailsMember(){
+      axios
+        .get(
+          apiUrl +
+            "/Player/GetPlayer/1"
+        )
+        .then(
+          function(response) {
+            this.memberVM = response.data;
+            this.$refs.myModalMember.show();
+          }.bind(this)
+        )
+        .catch(function(error) {
+          console.log(error);
+        });
+
+      
     }
   },
   computed: {

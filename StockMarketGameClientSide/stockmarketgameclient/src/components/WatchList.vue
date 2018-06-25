@@ -2,11 +2,11 @@
     <div>
         <div class="br-pageheader pd-y-15 pd-l-20">
         <nav class="breadcrumb pd-0 mg-0 tx-12">
-          <a class="breadcrumb-item">Share</a>
+          <a class="breadcrumb-item">Watch </a>
         </nav>
       </div>
       <div class="pd-x-20 pd-sm-x-30 pd-t-20 pd-sm-t-30">
-        <h4 class="tx-gray-800 mg-b-5">My Share</h4>
+        <h4 class="tx-gray-800 mg-b-5">Selected Company</h4>
       </div>
 
     <div class="br-pagebody pd-x-20 pd-sm-x-30 pd-b-20">
@@ -23,10 +23,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="share in shareList" v-bind:key="share.id">
-                                        <td>{{share.name}}</td>
-                                        <td>{{share.noOFShares}}</td>
-                                        <td class="tx-right">{{share.shareValue}}</td>
+                                    <tr v-for="watch in watchList" v-bind:key="watch.id">
+                                        <td>{{watch.name}}</td>
+                                        <td>{{watch.noOFShares}}</td>
+                                        <td class="tx-right">{{watch.shareValue}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -47,32 +47,32 @@ import axios from "axios";
 import apiUrl from "@/assets/common";
 
 export default {
-  data() {
-    return {
-      shareList: []
-    };
-  },
-  methods: {
-    getMyShares() {
-      axios
+    data(){
+        return{
+            watchList: []
+        };
+
+    },
+    methods:{
+        getMyWatchList(){
+            axios
         .get(
-          apiUrl +
-            "/Purchase/GetMyShares/" +
-            localStorage.getItem("gamePlayerId")
+          apiUrl + "/Game/GetWatchList/" + localStorage.getItem("gamePlayerId")
         )
         .then(
           function(response) {
-            this.shareList = response.data;
+            this.watchList = response.data;
           }.bind(this)
         )
         .catch(function(error) {
           console.log(error);
         });
+        }
+
+    },
+    mounted(){
+        this.getMyWatchList();
     }
-  },
-  computed: {},
-  mounted() {
-    this.getMyShares();
-  }
-};
+}
 </script>
+
