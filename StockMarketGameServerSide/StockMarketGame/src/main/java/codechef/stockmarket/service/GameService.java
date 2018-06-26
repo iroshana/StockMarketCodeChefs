@@ -235,7 +235,7 @@ public class GameService {
             responseData.setGameId(game.getId());
             responseData.setGameRoundId(gRound.getId());
             
-            for(GamePlayer gPlayer : game.getGamePlayers()){
+             for(GamePlayer gPlayer : game.getGamePlayers()){
                 Player player = gPlayer.getPlayer();
                 player.setIsPlaying(false);
                 player.setIsActive(false);

@@ -97,8 +97,6 @@ public class BOTService {
                 player.setEmail("");
                 player.setRating(0);
                 player.setAi(true);
-                player.setIsActive(true);
-                player.setIsPlaying(true);
                 
                 newPlayers.add(player);
             }
@@ -109,8 +107,7 @@ public class BOTService {
                 player.setEmail("");
                 player.setRating(0);
                 player.setAi(true);
-                player.setIsActive(true);
-                player.setIsPlaying(true);
+                
                 newPlayers.add(player);
             
         }else if(aiPlayers.size() >= 2){
@@ -154,6 +151,10 @@ public class BOTService {
                 roundPlayer.setScore(0);
 
                 gameRoundPlayerRepository.save(roundPlayer);
+                
+                player.setIsActive(true);
+                player.setIsPlaying(true);
+                playerRepository.save(player);
             }
             
         }  
