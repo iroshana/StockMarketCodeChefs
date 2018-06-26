@@ -20,9 +20,11 @@ Need to Install
 <li>Apache Maven 3.5.3 or higher</li>
 </ul>
 
-Maven Configuration Follow this link - https://www.mkyong.com/maven/how-to-install-maven-in-windows/
+Maven Configuration Follow this link - https://www.mkyong.com/maven/how-to-install-maven-in-windows/ <br />
 Download Maven Link - http://maven.apache.org/download.cgi
 
+create a new Database. Database Name is 'stockmarket'. <br />
+Then run script 'stockmarket.sql' file in document Folder.
 
 ## Client Side Configuration
 
@@ -32,7 +34,7 @@ Need to Install
 <li>Vue js version 2.5.2</li>
 </ul>
 
-please user Node.js Command Prompt
+please use Node.js Command Prompt <br />
 clone git project and go to the StockMarketFinalProject/stockmarketgameclient/
 
 1. npm install

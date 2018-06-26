@@ -12,7 +12,7 @@
               <div class="card card-body bg-dark tx-white bd-0">
                 <div align="center">
                   <div class="pd-x-25">
-                    <h2 id="time" class="tx-white tx-lato mg-b-5">5:00</h2>
+                    <h2 id="time" class="tx-white tx-lato mg-b-5">1:00</h2>
                   </div>  
                 </div>              
               </div>
@@ -31,7 +31,7 @@
                   Bank Balance
                 </div>
                 <div class="card-body">
-                  <label v-cloak>Rs. {{gamePlayerDetails.bankBalance}}</label>
+                  <label v-cloak>Rs. {{gamePlayerDetails.bankBalance.toFixed(2)}}</label>
                 </div>
               </div>
               <br />
@@ -49,16 +49,16 @@
                   Total Purchase
                 </div>
                 <div class="card-body">
-                  <label v-cloak>{{gamePlayerDetails.totalPurchase}}</label>
+                  <label v-cloak>{{gamePlayerDetails.totalPurchase.toFixed(2)}}</label>
                 </div>
               </div>
               <br />
               <div class="card">
                 <div class="card-header tx-medium">
-                  Total Sales
+                  Round Winner
                 </div>
                 <div class="card-body">
-                  <label v-cloak>{{gamePlayerDetails.totalSales}}</label>
+                  <label v-cloak>{{gamePlayerDetails.gameLeaderName}}</label>
                 </div>
               </div>
               <br />
@@ -67,7 +67,7 @@
                   My Score
                 </div>
                 <div class="card-body">
-                  <label v-cloak>{{gamePlayerDetails.score}}</label>
+                  <label v-cloak>{{gamePlayerDetails.score.toFixed(2)}}</label>
                 </div>
               </div>
               <br />
@@ -158,6 +158,7 @@
                 
               </div>
             </div> -->
+            <Chart :idData="chartData" v-if="isdisplay"></Chart>
             <div v-for="lst in sharePriceList" v-bind:key="lst.id">
               <div class="card shadow-base bd-0">
               <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
@@ -263,7 +264,8 @@
              :hide-header="true">
 
              <div class="row no-gutters">
-               <b-button type="button" @click="nextRound()" class="btn btn-info btn-lg" variant="primary">Next Round</b-button>
+               <b-button v-if="gamePlayerDetails.round != 0" type="button" @click="nextRound()" class="btn btn-info btn-lg" variant="primary">Next Round</b-button>
+               <b-button v-if="gamePlayerDetails.round == 0" type="button" @click="finishGame()" class="btn btn-info btn-lg" variant="primary">Finish</b-button>
                <div class="col-md-12">
                  <span v-if="gamePlayerDetails.isRoundWinner">You are Won this Round</span>
                  <span v-if="gamePlayerDetails.isGameWinner">You are Won the Game</span>
@@ -282,11 +284,11 @@
 
                  <div class="row">
                  <div class="col-md-6">
-                   <b-form-group id="exampleInputGroup1"
+                   <b-form-group id="exampleInputGroup20"
                     label="Compnay Name:"
-                    label-for="exampleInput1"
+                    label-for="exampleInput21"
                     >
-        <b-form-input id="exampleInput1"
+        <b-form-input id="exampleInput21"
                       type="text"
                       v-model="modalVM.companyName"
                       :readonly="true">
@@ -294,10 +296,10 @@
       </b-form-group>
                  </div>
                  <div class="col-md-6">
-                   <b-form-group id="exampleInputGroup2"
+                   <b-form-group id="exampleInputGroup22"
                     label="No Of Shares:"
-                    label-for="exampleInput2">
-        <b-form-input id="exampleInput2"
+                    label-for="exampleInput22">
+        <b-form-input id="exampleInput22"
                       type="text"
                       v-model="modalVM.noOfShares"
                       :readonly="true">
@@ -306,10 +308,10 @@
                  </div></div>
 <div class="row">
                  <div class="col-md-6">
-                   <b-form-group id="exampleInputGroup3"
+                   <b-form-group id="exampleInputGroup23"
                     label="Share Value:"
-                    label-for="exampleInput3">
-        <b-form-input id="exampleInput3"
+                    label-for="exampleInput23">
+        <b-form-input id="exampleInput23"
                       type="text"
                       v-model="modalVM.shareValue"
                       :readonly="true">
@@ -401,7 +403,8 @@ export default {
         round: 0,
         playerId: 0,
         isGameWinner: false,
-        isRoundWinner: false
+        isRoundWinner: false,
+        gameLeaderName: ''
       },
       watchList: [],
       shareList: [],
@@ -575,7 +578,12 @@ export default {
         if(display.textContent == '00:00'){ 
           clearInterval(timeobj);
           this.completeRound();
-        }        
+        }
+        
+        if(display.textContent == '00:40' && this.gamePlayerDetails.round > 1){
+          this.getGameAnalysis();
+        }
+        
       }.bind(this), 1000);      
     },
     timerStart() {
@@ -608,12 +616,14 @@ export default {
             console.log(response);
             localStorage.setItem("roundNo", response.data.roundNo);
             localStorage.setItem("gameRoundId", response.data.gameRoundId); 
+            localStorage.setItem("gameRoundPlayerId", response.data.gameRoundPlayerId);
             
             this.gamePlayerDetails.round = response.data.roundNo;
             this.gamePlayerDetails.gameHighScore = response.data.gameHighScore;
             this.gamePlayerDetails.score = response.data.myRoundScore;
             this.gamePlayerDetails.isGameWinner = response.data.isGameWinner;
             this.gamePlayerDetails.isRoundWinner = response.data.isRoundWinner;
+            this.gamePlayerDetails.gameLeaderName = response.data.gameLeaderName;
           }.bind(this)
         )
         .catch(function(error) {
@@ -655,7 +665,8 @@ export default {
         })
         .then(
           function(response) {
-
+            this.$refs.myModalSell.hide(); 
+            this.getShareList();
           }.bind(this)
         )
         .catch(function(error) {
@@ -664,21 +675,35 @@ export default {
 
     },
     showChartModal(lst){
+      this.isdisplay = false;
       axios
         .get(apiUrl + "/Company/GetChartData/" + localStorage.getItem("gameId") + "/" + lst.id)
         .then(
           function(response) {
             this.chartData = response.data;
-
+            this.isdisplay = true;
+          }.bind(this)
+        )
+        .catch(function(error) {
+          console.log(error);
+        });      
+      //this.chartData = [20, 6,18,9,3];
+      //this.$refs.chartModalRef.show();
+    },
+    getGameAnalysis(){
+      axios
+        .get(apiUrl + "/Analyzer/GetGamePlayer/" + localStorage.getItem("gameId"))
+        .then(
+          function(response) {
+            
           }.bind(this)
         )
         .catch(function(error) {
           console.log(error);
         });
-
-      this.isdisplay = true;
-      this.chartData = [20, 6,18,9,3];
-      this.$refs.chartModalRef.show();
+    },
+    finishGame(){
+      location.reload();
     }
   },
   mounted() {

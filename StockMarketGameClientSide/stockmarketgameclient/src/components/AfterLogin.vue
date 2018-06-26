@@ -167,10 +167,11 @@ export default {
       }
     },
     createGame() {
+      let playerId = localStorage.getItem("playerId");
       axios
         .post(apiUrl + "/Game/Create/", {
           id: 0,
-          playerId: 1,
+          playerId: playerId,
           bankId: this.bankId,
           brokerId: this.brokerId,
           bankBalance: 1000
@@ -192,8 +193,7 @@ export default {
           console.log(error);
         });
     },
-    tempLogin() {
-      localStorage.setItem("bankId", 1);
+    tempLogin() {      
       this.isDashboard = DASHBOARD_SHOW;
       this.$router.push("/dashboard");
     },
@@ -204,7 +204,7 @@ export default {
       axios
         .get(
           apiUrl +
-            "/Player/GetPlayer/1"
+            "/Player/GetPlayer/" + localStorage.getItem("playerId")
         )
         .then(
           function(response) {

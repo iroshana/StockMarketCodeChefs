@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <input type="password" class="form-control input-login" v-model="userModel.password" placeholder="Enter Password" v-on:keyup.enter="login">
                     <!--<small v-show="isSubmitted && !userModel.password" class="tx-danger">User Name is Required</small>-->
-                    
+                    <small v-show="isErrorLogin" class="tx-danger">{{messgae}}</small>
                 </div><!-- form-group -->
                 <button v-on:click="login" type="submit" class="btn btn-primary active  btn-block mg-b-10">  Log me in</button>
                 <div class="text-center" @click="changecomponent()"><a>Sign Up</a></div>
@@ -86,7 +86,7 @@
                     label-for="exampleInput11">
         <b-form-input id="exampleInput11"
                       type="password"
-                      v-model="signupVM.Password"
+                      v-model="signupVM.password"
                       >
         </b-form-input>
       </b-form-group>
@@ -122,6 +122,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import apiUrl from "@/assets/common";
 import AfterLogin from "@/components/AfterLogin"
 
 const LOGIN = 0,
@@ -133,7 +135,24 @@ export default {
   components: { AfterLogin },  
   methods: {
     login: function() {
-      this.currentStatus = LOGIN_SUCCESS;      
+      axios
+        .post(apiUrl + "/Player/Authenticate",{
+          password: this.userModel.password,
+          userName: this.userModel.userName
+        })
+        .then(
+          function(response) {
+            console.log(response);
+            localStorage.setItem("playerId", response.data.playerId);
+            this.currentStatus = LOGIN_SUCCESS;            
+          }.bind(this)
+        )
+        .catch(function(error) {
+          this.isErrorLogin = true;
+          this.messgae = "Invalid Username or Password";
+          console.log(error);
+        }.bind(this));
+            
     },
     changecomponent: function() {
       //this.$refs.signupref.show();
@@ -145,16 +164,19 @@ export default {
     onSubmitPlayer(evt){
       evt.preventDefault();
 
-      if(this.signupVM.name && this.signupVM.email){
+      if(this.signupVM.name && this.signupVM.email && this.signupVM.password && this.signupVM.userName){
         axios
-        .post(apiUrl + "/Player/Create",{
-
+        .post(apiUrl + "/Player/Register",{
+          email: this.signupVM.email,
+          name: this.signupVM.name,
+          password: this.signupVM.password,
+          rating: this.signupVM.rating,
+          userName: this.signupVM.userName
         })
         .then(
           function(response) {
-            this.$refs.myModalRef.hide();
-            this.getShareList();
-            this.getCompanySharePrices();
+            this.showSignUp = false;
+            
           }.bind(this)
         )
         .catch(function(error) {
@@ -193,7 +215,9 @@ export default {
         rating:'1',
         userName:'',
         password:''
-      }
+      },
+      isErrorLogin: false,
+      messgae: ''
     };
   }
 };
