@@ -1,11 +1,8 @@
 #Team Code Chefs
 
-#DEVELOPERS
-#R I Athapattu 
-#T D Perera
-#L K Weerasinghe
-#A K Sameera Jayasanka Athukorala
+## Files
 
+<ul>
+<li>stockmarket.sql</li>
 
-
-#https://github.com/iroshana/StockMarketCodeChefs.git
+</ul>
