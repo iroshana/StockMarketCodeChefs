@@ -175,7 +175,7 @@ public class AnalizeService {
         
         Set<Long> keys = list.keySet();
         List<Long> frozenOrder=new ArrayList<>(keys);
-        int no = frozenOrder.size() - 3 == 0 ? frozenOrder.size() : frozenOrder.size()-3 ;
+        int no = frozenOrder.size() - 3 <= 0 ? frozenOrder.size() : frozenOrder.size()-3 ;
         List<Long> sub =frozenOrder.subList(0, no);
         for(int i = 0; i < sub.size(); i ++){
             eligiableCompanies.add(sub.get(i).intValue());

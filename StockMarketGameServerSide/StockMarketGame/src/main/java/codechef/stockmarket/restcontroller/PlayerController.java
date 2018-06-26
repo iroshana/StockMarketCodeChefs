@@ -39,7 +39,7 @@ public class PlayerController {
     @CrossOrigin
     @RequestMapping(value = "/Register", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
     public ResponseEntity savePlayer(@RequestBody PlayerViewModel playerView){
-        Player response = null;
+        GameResponseDateViewModel response = new GameResponseDateViewModel();
         if(playerView != null){
             Player player = new Player();
             player.setName(playerView.getName());
@@ -51,8 +51,12 @@ public class PlayerController {
             player.setIsPlaying(false);
             player.setAi(false);
             
-            response = playerRepository.save(player);
-
+            playerRepository.save(player);
+            response.setStatusCode(1);
+            response.setMessage("Registration Complete");
+        }else{
+            response.setStatusCode(1);
+            response.setMessage("Registration Failed");
         }
         if(response == null){
             return new ResponseEntity(response, HttpStatus.BAD_REQUEST);

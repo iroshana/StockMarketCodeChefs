@@ -6,10 +6,14 @@
 package codechef.stockmarket.restcontroller;
 
 import codechef.stockmarket.common.*;
+import codechef.stockmarket.common.ViewModels.CompanyViewModel;
 import codechef.stockmarket.entity.Game;
+import codechef.stockmarket.entity.GameCompany;
 import codechef.stockmarket.repository.*;
 import codechef.stockmarket.service.AnalizeService;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +58,8 @@ public class AnalyzeController {
     @Autowired
     PlayerTransactionRepository playerTransactionRepository = null;
     AnalizeService analizeService = null;
-    @RequestMapping(value = "/GetGamePlayer/{gamePlayerId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
-    public void getCompanyHistory(@PathVariable(value = "gameId") Long gameId,@PathVariable(value = "gameCompanyId") Long gameCompanyId) {
+    @RequestMapping(value = "/GetGamePlayer/{gameId}", method = RequestMethod.GET, produces = CommonUtil.APPLICATION_JSON)
+    public List<CompanyViewModel> getCompanyHistory(@PathVariable(value = "gameId") Long gameId) {
         
         analizeService = new AnalizeService(gameRepository,gameCompanyRepository,gamePlayerRepository,playerRepository,roundRepository,
             gameRoundRepository,gameRoundPlayerRepository,bankRepository,brokerRepository,companyRepository,
@@ -64,10 +68,33 @@ public class AnalyzeController {
         Game game = gameRepository.findById(gameId).get();
         Map<Long, List<Double>> CompanyHistory;
         CompanyHistory = new HashMap<>();
-        
+        List<CompanyViewModel> bestCompanies = new ArrayList<>();
         CompanyHistory = analizeService.AnalyzeCompanies(game);
         
-        
-        
+        List<Integer> givenList = analizeService.BestCompanies(CompanyHistory);
+        for(int a : givenList){
+            GameCompany bestCompany= gameCompanyRepository.findById(Long.valueOf(a)).get();
+            CompanyViewModel company = new CompanyViewModel();
+            company.setId(bestCompany.getId());
+            company.setName(bestCompany.getCompany().getName());
+            company.setShareValue(bestCompany.getShareValue());
+            company.setNoOFShares(bestCompany.getNoOfShares());
+            
+            bestCompanies.add(company);
+        }
+        if(givenList.size() == 0){
+            givenList = analizeService.EligiableCompanies(CompanyHistory);
+            for(int a : givenList){
+            GameCompany bestCompany= gameCompanyRepository.findById(Long.valueOf(a)).get();
+            CompanyViewModel company = new CompanyViewModel();
+            company.setId(bestCompany.getId());
+            company.setName(bestCompany.getCompany().getName());
+            company.setShareValue(bestCompany.getShareValue());
+            company.setNoOFShares(bestCompany.getNoOfShares());
+            
+            bestCompanies.add(company);
+        }
+        }
+        return bestCompanies;
     }
 }

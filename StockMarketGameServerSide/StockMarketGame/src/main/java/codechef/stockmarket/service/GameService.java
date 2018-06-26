@@ -240,6 +240,8 @@ public class GameService {
                 player.setIsPlaying(false);
                 player.setIsActive(false);
                 player.setRating(player.getRating() + 1);
+                
+                playerRepository.save(player);
             }
 
         }

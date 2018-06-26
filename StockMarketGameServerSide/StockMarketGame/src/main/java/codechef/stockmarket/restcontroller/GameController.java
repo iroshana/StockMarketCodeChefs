@@ -323,20 +323,22 @@ public class GameController {
         
         if(gRound.getRound().getRoundNo() != 5){
             responseData = gameService.CompleteGame(game,gRound);
+            responseData.setGameLeaderName(highest.getName());
+            responseData.setMyRoundScore(player.getScore());
+            responseData.setGameHighScore(gameRepository.findById(responseViewModel.getGameId()).get().getGameLeaderPoint());
+            responseData.setIsRoundWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
         }else{
             responseData = gameService.EndGame(game,gRound);
-        }
-        
-        responseData.setGameLeaderName(highest.getName());
-        responseData.setMyRoundScore(player.getScore());
-        responseData.setGameHighScore(gameRepository.findById(responseViewModel.getGameId()).get().getGameLeaderPoint());
-        responseData.setIsRoundWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
-        
-        highest  = gameService.GetGameHighestScore(game);
-        
-        responseData.setIsGameWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
-        
+            responseData.setGameLeaderName(highest.getName());
+            responseData.setMyRoundScore(player.getScore());
+            responseData.setGameHighScore(gameRepository.findById(responseViewModel.getGameId()).get().getGameLeaderPoint());
+            responseData.setIsRoundWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
 
+            highest  = gameService.GetGameHighestScore(game);
+
+            responseData.setIsGameWinner((Objects.equals(highest.getId(), player.getPlayer().getId())));
+
+        }
         if(responseData == null){
             return new ResponseEntity(responseData, HttpStatus.BAD_REQUEST);
         }else{
