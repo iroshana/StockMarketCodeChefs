@@ -687,8 +687,6 @@ export default {
         .catch(function(error) {
           console.log(error);
         });      
-      //this.chartData = [20, 6,18,9,3];
-      //this.$refs.chartModalRef.show();
     },
     getGameAnalysis(){
       axios
@@ -712,7 +710,7 @@ export default {
     this.getWatchList();
     this.getShareList();
     this.getCompanySharePrices();
-    //this.timerStart();
+    this.timerStart();
   },
   computed: {}
 };

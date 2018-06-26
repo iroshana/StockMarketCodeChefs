@@ -7,7 +7,7 @@
                 <div v-if="!isStartGame">
                     <button type="button" class="btn btn-info btn-block btn-lg" @click="startGame"><i class="fa fa-hourglass-start"></i> Start Game</button>
                     <button type="button" class="btn btn-info btn-block btn-lg" @click="showDetailsMember()"><i class="fa fa-eye"></i> View Profile</button>
-                    <button type="button" class="btn btn-info btn-block btn-lg" @click="tempLogin"><i class="fa fa-eye"></i> Temp</button>
+                    <!-- <button type="button" class="btn btn-info btn-block btn-lg" @click="tempLogin"><i class="fa fa-eye"></i> Temp</button> -->
                 </div>
                 <div v-else>
                     <select class="form-control" v-model="bankId">
