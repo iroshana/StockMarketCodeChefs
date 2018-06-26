@@ -45,6 +45,12 @@ public class Player {
     @Column(name = "AI")
     private boolean ai;
     
+    @Column(name = "Password")
+    private String Password;  
+    
+    @Column(name = "UserName")
+    private String userName;  
+    
     @OneToMany(mappedBy = "Player")
     private Set<GamePlayer> GamePlayer = new HashSet<GamePlayer>();
     
@@ -174,6 +180,34 @@ public class Player {
      */
     public void setAi(boolean ai) {
         this.ai = ai;
+    }
+
+    /**
+     * @return the Password
+     */
+    public String getPassword() {
+        return Password;
+    }
+
+    /**
+     * @param Password the Password to set
+     */
+    public void setPassword(String Password) {
+        this.Password = Password;
+    }
+
+    /**
+     * @return the userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName the userName to set
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 }

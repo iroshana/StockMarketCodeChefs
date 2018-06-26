@@ -17,7 +17,9 @@ public class PlayerViewModel {
     private int rating;
     
     private String email;
-
+    
+    private String password;
+    private String userName;
     /**
      * @return the Id
      */
@@ -72,5 +74,33 @@ public class PlayerViewModel {
      */
     public void setEmail(String Email) {
         this.email = Email;
+    }
+
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * @return the userName
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * @param userName the userName to set
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

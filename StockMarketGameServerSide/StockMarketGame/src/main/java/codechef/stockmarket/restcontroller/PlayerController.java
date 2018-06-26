@@ -9,6 +9,7 @@ import codechef.stockmarket.common.CommonUtil;
 import codechef.stockmarket.common.ViewModels.*;
 import codechef.stockmarket.entity.*;
 import codechef.stockmarket.repository.*;
+import codechef.stockmarket.service.PasswordEncryptionService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,16 +36,17 @@ public class PlayerController {
     PlayerRepository playerRepository = null;
     @Autowired
     GameRepository gameRepository = null;
-    
     @CrossOrigin
-    @RequestMapping(value = "/Create", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
-    public ResponseEntity saveTest(@RequestBody PlayerViewModel playerView){
+    @RequestMapping(value = "/Register", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
+    public ResponseEntity savePlayer(@RequestBody PlayerViewModel playerView){
         Player response = null;
         if(playerView != null){
             Player player = new Player();
             player.setName(playerView.getName());
             player.setEmail(playerView.getEmail());
             player.setRating(0);
+            player.setUserName(playerView.getUserName());
+            player.setPassword(PasswordEncryptionService.Encryption(playerView.getPassword()));
             player.setIsActive(true);
             player.setIsPlaying(false);
             player.setAi(false);
@@ -91,5 +93,32 @@ public class PlayerController {
          }
          
          return playerListView;
+    }
+    
+    @CrossOrigin
+    @RequestMapping(value = "/Authenticate", method = RequestMethod.POST, consumes = CommonUtil.APPLICATION_JSON, produces = CommonUtil.APPLICATION_JSON)
+    public ResponseEntity ValidateUser(@RequestBody LoginViewModel loginView){
+        LoginResponseViewModel userResponse = new LoginResponseViewModel();
+        if(loginView != null){
+            Player player = playerRepository.findByUserName(loginView.getUserName());
+            if(player != null){
+                if(player.getPassword().equals(PasswordEncryptionService.Encryption(loginView.getPassword()))){
+                    userResponse.setStatusCode(1);
+                    userResponse.setMessage("Login Sucessfull");
+                    userResponse.setPlayerId(player.getId());
+                }else{
+                    userResponse.setStatusCode(0);
+                    userResponse.setMessage("Incorrect Password Please Try Again");
+                }
+            }else{
+                userResponse.setStatusCode(0);
+                userResponse.setMessage("Invalid User Name");
+            }
+        }
+        if(userResponse.getStatusCode() == 0){
+            return new ResponseEntity(userResponse, HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity(userResponse, HttpStatus.OK);
+        }
     }
 }
