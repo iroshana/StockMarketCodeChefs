@@ -10,6 +10,8 @@
  <li>16211133       S J Athukorala</li>
  </ul>
 
+First need to clone git project.
+
 ## Server Side Configuration
 
 Need to Install
@@ -19,6 +21,9 @@ Need to Install
 <li>MySql</li>
 <li>Apache Maven 3.5.3 or higher</li>
 </ul>
+
+JDK Download - http://www.oracle.com/technetwork/java/javase/downloads/index.html <br />
+wampServer Download Link - http://www.wampserver.com/en/ <br />
 
 Maven Configuration Follow this link - https://www.mkyong.com/maven/how-to-install-maven-in-windows/ <br />
 Download Maven Link - http://maven.apache.org/download.cgi
@@ -38,8 +43,10 @@ Need to Install
 <li>Vue js version 2.5.2 or higher</li>
 </ul>
 
+Node JS Download Link - https://nodejs.org/en/ <br />
+
 please use Node.js Command Prompt <br />
-clone git project and go to the .../StockMarketGameClientSide/stockmarketgameclient/
+Go to the .../StockMarketGameClientSide/stockmarketgameclient/
 
 1. npm install
 2. npm run dev
